@@ -1,0 +1,270 @@
+\documentclass{beamer}
+
+%% Use package -----------------------------------------------------------------
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{multicol}
+\usepackage{listings}
+
+%% Beamer customization---------------------------------------------------------
+
+\usepackage{xcolor}
+\usetheme{Warsaw}
+
+%% Themes
+% Outer themes
+\useoutertheme{shadow}
+% Rounded boxes and shadows
+\useinnertheme[shadow=true]{rounded}
+% Solid \item symbols
+\useinnertheme{circles}
+
+%% Custom colors
+\definecolor{rltgreen}{rgb}{0,0.5,0}
+\definecolor{pasteur}{RGB}{0,90,154}
+\setbeamerfont{block title}{size={}}
+\setbeamercolor{structure}{fg=pasteur}
+\setbeamercolor{item}{fg=pasteur}
+
+%Color of title
+\setbeamertemplate{frametitle}
+{
+    \nointerlineskip
+    \begin{beamercolorbox}[sep=0.3cm,ht=1.8em,wd=\paperwidth]{frametitle}
+        \vbox{}\vskip-2ex%
+        \strut\insertframetitle\strut
+        \vskip-0.8ex%
+    \end{beamercolorbox}
+}
+% Hide navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+%% Title block
+\setbeamercolor*{title}{use=structure,fg=white,bg=pasteur}
+
+%% Bottom infolines
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.7\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle\hspace*{3em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatletter
+
+%% Top infolines
+\setbeamertemplate{headline}{%
+\leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex]{palette quaternary}%
+    \insertsectionnavigationhorizontal{\paperwidth}{}{\hskip0pt plus1filll}
+    \end{beamercolorbox}%
+  }
+}
+
+%% Define Snakemake ------------------------------------------------------------
+
+\definecolor{eclipseBlue}{RGB}{42,0.0,255}
+\definecolor{eclipseGreen}{RGB}{63,127,95}
+\definecolor{eclipsePurple}{RGB}{127,0,85}
+
+\lstset{language=Python}
+\lstset{
+    basicstyle=\tiny,
+    morekeywords={rule, output, shell, parms, run, configfile},
+    showstringspaces=false,
+    commentstyle=\color{eclipseGreen}, % style of comments
+    keywordstyle=\color{eclipsePurple}, % style of keywords
+    stringstyle=\color{eclipseBlue}, % style of strings
+}
+
+
+%% Set up title ----------------------------------------------------------------
+
+\title{Snakemake Presentation}
+\author[T.Cokelaer \& D.Desvillechabrol]{Thomas Cokelaer and Dimitri Desvillechabrol}
+\institute{Institut Pasteur}
+\date{March 23 2016}
+
+\begin{document}
+
+%% Title slide -----------------------------------------------------------------
+
+\begin{frame}[plain]
+    \titlepage
+    \begin{textblock*}{5cm}(4.5cm,0.3cm)
+        \includegraphics[scale=0.09]{Institut_Pasteur.png}
+    \end{textblock*}
+\end{frame}
+
+%% Slides ----------------------------------------------------------------------
+
+\section{Introduction}
+
+\begin{frame}
+    \frametitle{Workflow management}
+    \begin{itemize}
+        \item Many methods to implement a workflow.
+        \item They must handle:
+            \begin{itemize}
+                \item Parallelization
+                \item Suspend/Resume
+            \end{itemize}
+    \end{itemize}
+    \begin{block}<2>{Snakemake}
+        \begin{itemize}
+            \item Workflow management system based on python.
+            \item Simplify the workflow's conceptions.
+            \item Decompose workflow into rules.
+        \end{itemize} 
+    \end{block}
+\end{frame}
+
+\section{Rules}
+
+\begin{frame}[fragile]
+    \frametitle{Basic rule}
+    \begin{block}{Snakefile}
+    \begin{lstlisting}
+rule bwa_mapping:
+    input:
+        ref = "genome.fa",
+        fastq = "sample_A.fastq"
+    output:
+        "mapped_sample/sample_A.bam"
+    shell:
+        "bwa mem {input.ref} {input.fastq} | samtools view -Sb - > {output}"
+    \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Generalizing the rule}
+    \begin{block}{Snakefile}
+    \begin{lstlisting}
+SAMPLE = ["sample_A", "sample_B"]
+
+rule all:
+    input:
+        expand("mapped_sample/{sample}.bam", sample=SAMPLE)
+
+rule bwa_mapping:
+    input:
+        ref = "genome.fa",
+        fastq = "{sample}.fastq"
+    output:
+        "mapped_sample/{sample}.bam"
+    shell:
+        "bwa mem {input.ref} {input.fastq} | samtools view -Sb - > {output}"
+    \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Adding a rule}
+    \begin{block}{Snakefile}
+    \begin{lstlisting}
+SAMPLE = ["sample_A", "sample_B"]
+
+rule all:
+    input:
+        expand("sorted/{sample}.bam", sample=SAMPLE)
+
+rule bwa_mapping:
+    input:
+        ref = "genome.fa",
+        fastq = "{sample}.fastq"
+    output:
+        "mapped_sample/{sample}.bam"
+    shell:
+        "bwa mem {input.ref} {input.fastq} | samtools view -Sb - > {output}"
+
+rule sort_mapping:
+    input:
+        bam = "mapped_sample/{sample}.bam"
+    output:
+        "sorted/{sample}.bam"
+    shell:
+        "samtools sort -O bam {input.bam} > {output}"
+    \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\section{Config file}
+
+\begin{frame}[fragile]
+    \frametitle{Config file}
+    \begin{itemize}
+        \item We can add a config file (JSON/YAML) in our snakefile.
+    \end{itemize}
+    \begin{block}{config.yaml}
+        \begin{lstlisting}
+samples:[sample_A, sample_B]
+        \end{lstlisting}
+    \end{block}
+    \begin{block}{Snakefile}
+    \begin{lstlisting}
+configfile: "config.yaml" # Ou .json
+
+rule all:
+    input:
+        expand("mapped_sample/{sample}.bam", sample=config["samples"])
+
+rule bwa_mapping:
+    input:
+        ref = "genome.fa",
+        fastq = "{sample}.fastq"
+    output:
+        "mapped_sample/{sample}.bam"
+    shell:
+        "bwa mem {input.ref} {input.fastq} | samtools view -Sb - > {output}"
+    \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\section{Advanced example}
+
+\begin{frame}[fragile]
+    \frametitle{YAML file}
+    \begin{lstlisting}
+reference: reference.fa
+
+sample: 
+    - ERR036019.bam
+
+markduplicate: true
+
+freebayes:
+    --ploidy: 1
+
+vcf_filter:
+    QUAL: 1000
+    FREQ: 0.9
+    INFO:
+        DP: >10
+    \end{lstlisting}
+\end{frame}
+
+\section{Running}
+
+\section{References}
+
+\begin{frame}
+    \frametitle{References}
+    \begin{itemize}
+        \item http://snakemake.bitbucket.org/snakemake-tutorial.html
+        \item http://slides.com/johanneskoester/deck-1
+    \end{itemize}
+\end{frame}
+
+\end{document}
