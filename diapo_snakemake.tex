@@ -9,6 +9,7 @@
 \usepackage[absolute,overlay]{textpos}
 \usepackage{multicol}
 \usepackage{listings}
+\usepackage{svg}
 
 %% Beamer customization---------------------------------------------------------
 
@@ -80,8 +81,8 @@
 
 \lstset{language=Python}
 \lstset{
-    basicstyle=\tiny,
-    morekeywords={rule, output, shell, parms, run, configfile},
+    basicstyle=\tiny\ttfamily,
+    morekeywords={rule, output, shell, params, run, configfile, temp},
     showstringspaces=false,
     commentstyle=\color{eclipseGreen}, % style of comments
     keywordstyle=\color{eclipsePurple}, % style of keywords
@@ -236,6 +237,7 @@ rule bwa_mapping:
 
 \begin{frame}[fragile]
     \frametitle{YAML file}
+    \begin{block}{config\_vc.yaml}
     \begin{lstlisting}
 reference: reference.fa
 
@@ -248,14 +250,133 @@ freebayes:
     --ploidy: 1
 
 vcf_filter:
-    QUAL: 1000
+    QUAL: 10000
     FREQ: 0.9
     INFO:
-        DP: >10
+        DP: ">10"
     \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Optional rule}
+    \begin{block}{Snakefile}
+        \begin{lstlisting}
+MARKJOB = config["markduplicate"]
+MARKTAG = ""
+if MARKJOB:
+    MARKTAG = "_undup"
+
+rule markDuplicate:
+    input:
+        bam = "{sample}.bam"
+    output:
+        a = "{sample}%s.bam" % MARKTAG,
+        b = temp("{sample}.metrics")
+    run:
+        if MARKJOB:
+            shell("./MarkDuplicates I={input.bam} O={output.a} M={output.b}")
+        else:
+            shell("touch {output.b}")
+        \end{lstlisting}
+    \end{block}
+    \begin{itemize}
+        \item NB: We can't use the ".format()" method.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Optional parameter}
+    \begin{block}{Snakefile}
+        \begin{lstlisting}
+rule samtools_index:
+    input: 
+        bam = "{sample}%s.bam" % MARKTAG
+    output:
+        "{sample}%s.bam.bai" % MARKTAG
+    shell:
+        "samtools index {input.bam}"
+
+rule freebayes:
+    input:
+        bam = "{sample}%s.bam" % MARKTAG,
+        bai = "{sample}%s.bam.bai" % MARKTAG,
+        ref = config["reference"]
+    output:
+        vcf = "{sample}.vcf"
+    params:
+        " ".join(['%s %s' % (key, value) for (key, value) in \
+            config["freebayes"].items()])
+    shell:
+        "freebayes {params} -f {input.ref} -b {input.bam} -v {output.vcf}"
+        \end{lstlisting}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Running python code}
+    \begin{block}{Snakefile}
+        \begin{lstlisting}
+rule vcf_filter:
+    input:
+        vcf = "{sample}.vcf"
+    output:
+        vcf = "{sample}_filter.vcf"
+    run:
+        from sequana import vcf_filter
+        vcf_record = vcf_filter.VCF(input["vcf"])
+        vcf_record.filter_vcf(config["vcf_filter"], output["vcf"])
+        \end{lstlisting}
+    \end{block}
 \end{frame}
 
 \section{Running}
+
+\begin{frame}[fragile]
+    \frametitle{Running snakemake}
+    \begin{itemize}
+        \item If all your file are in the current directory:
+            \begin{lstlisting}[language=bash]
+    snakemake
+            \end{lstlisting}
+        \item We can specify path of Snakefile and config file:
+            \begin{lstlisting}[language=bash]
+    snakemake -s path/to/Snakefile --configfile path/to/configfile
+            \end{lstlisting}
+        \item We can specify how many cores we want:
+            \begin{lstlisting}[language=bash]
+    snakemake -cores 4
+            \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Running snakemake on bic}
+    \begin{itemize}
+        \item It is very simple to run a workflow on bic:
+            \begin{lstlisting}[language={}]
+    module load snakemake
+    /local/gensoft2/exe/snakemake/3.5.4/bin/snakemake -p --cluster \
+    "qsub -q pf4 -cwd -V -b y" --jobs 5
+            \end{lstlisting}
+    \end{itemize}
+    \begin{alertblock}{Warning}
+        Module load doesn't work inside snakemake, we must use absolute path for some software.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Directed Acyclic Graph (DAG)}
+    \begin{itemize}
+        \item We can generate the DAG of your workflow:
+    \end{itemize}
+    \begin{lstlisting}[language=bash]
+        snakemake --dag | dot -Tsvg > dag.svg
+    \end{lstlisting}
+    \begin{center}
+        \includegraphics[scale=0.05]{dag_one_sample.png}
+    \end{center}
+\end{frame}
 
 \section{References}
 
