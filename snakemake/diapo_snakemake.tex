@@ -9,7 +9,6 @@
 \usepackage[absolute,overlay]{textpos}
 \usepackage{multicol}
 \usepackage{listings}
-\usepackage{svg}
 
 %% Beamer customization---------------------------------------------------------
 
@@ -93,7 +92,7 @@
 %% Set up title ----------------------------------------------------------------
 
 \title{Snakemake Presentation}
-\author[T.Cokelaer \& D.Desvillechabrol]{Thomas Cokelaer and Dimitri Desvillechabrol}
+\author[D.Desvillechabrol \& T.Cokelaer]{Dimitri Desvillechabrol and Thomas Cokelaer}
 \institute{Institut Pasteur}
 \date{March 23 2016}
 
@@ -131,7 +130,7 @@
     \end{block}
 \end{frame}
 
-\section{Rules}
+\section{Basic}
 
 \begin{frame}[fragile]
     \frametitle{Basic rule}
@@ -140,13 +139,28 @@
 rule bwa_mapping:
     input:
         ref = "genome.fa",
-        fastq = "sample_A.fastq"
+        fastq = "sample_A.fastq.gz"
     output:
         "mapped_sample/sample_A.bam"
     shell:
         "bwa mem {input.ref} {input.fastq} | samtools view -Sb - > {output}"
     \end{lstlisting}
     \end{block}
+    \begin{exampleblock}<2>{Shell}
+        \begin{lstlisting}[language={}]
+$ snakemake
+Job counts:
+	count	jobs
+	1	bwa_mapping
+	1
+rule bwa_mapping:
+	input: genome.fa, sample_A.fastq.gz
+	output: mapped_sample/sample_A.bam
+1 of 1 steps (100%) done
+$ snakemake
+Nothing to be done.
+        \end{lstlisting}
+    \end{exampleblock}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -343,10 +357,40 @@ rule vcf_filter:
             \begin{lstlisting}[language=bash]
     snakemake -s path/to/Snakefile --configfile path/to/configfile
             \end{lstlisting}
-        \item We can specify how many cores we want:
+        \item If you want to run on 4 cores:
             \begin{lstlisting}[language=bash]
     snakemake -cores 4
             \end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Interesting option}
+    \begin{itemize}
+        \item Dry-run is able to test if your Snakefile is valid:
+        \begin{lstlisting}[language={}]
+    snakemake -n
+        \end{lstlisting}
+        \item Change config variable with argument:
+        \begin{lstlisting}[language={}]
+    snakemake --config markduplicates=false
+        \end{lstlisting}
+        \begin{alertblock}{}
+            Doesn't work with boolean parameter because it becomes a string. 
+        \end{alertblock}
+        \item Running only one rule, here freebayes rule:
+        \begin{lstlisting}[language={}]
+    snakemake --force freebayes
+        \end{lstlisting}
+        \begin{alertblock}{}
+            Doesn't work if the rule uses wildcards declared in other rule.
+            \begin{lstlisting}[language={}]
+RuleException in line 42 of /home/desvillechabrol/Documents/pasteur/
+variant_calling/Snakefile:
+Could not resolve wildcards in rule freebayes:
+sample
+        \end{lstlisting}
+        \end{alertblock}
     \end{itemize}
 \end{frame}
 
@@ -387,7 +431,7 @@ rule vcf_filter:
         \begin{itemize}
             \item {\tiny https://bitbucket.org/snakemake/snakemake/wiki/Home}
         \end{itemize}
-        \item Usefull information:
+        \item Useful information:
         \begin{itemize}
             \item {\tiny http://slides.com/johanneskoester/deck-1}
             \item {\tiny http://snakemake.bitbucket.org/snakemake-tutorial.html}
@@ -397,6 +441,10 @@ rule vcf_filter:
         \item Advanced example:
         \begin{itemize}
             \item {\tiny https://github.com/sequana/sequana/tree/master/pipelines/variants}
+        \end{itemize}
+        \item Enable syntax in vim for Snakemake
+        \begin{itemize}
+            \item {\tiny http://tinyurl.com/zm4b6c4}
         \end{itemize}
     \end{itemize}
 \end{frame}
