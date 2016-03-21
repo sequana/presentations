@@ -94,7 +94,7 @@
 \title{Snakemake Presentation}
 \author[D.Desvillechabrol \& T.Cokelaer]{Dimitri Desvillechabrol and Thomas Cokelaer}
 \institute{Institut Pasteur}
-\date{March 23 2016}
+\date{March 22 2016}
 
 \begin{document}
 
@@ -220,7 +220,7 @@ rule sort_mapping:
 \begin{frame}[fragile]
     \frametitle{Config file}
     \begin{itemize}
-        \item We can add a config file (JSON/YAML) in our snakefile.
+        \item We can add a config file (JSON/YAML) in our Snakefile.
     \end{itemize}
     \begin{block}{config.yaml}
         \begin{lstlisting}
@@ -349,11 +349,11 @@ rule vcf_filter:
 \begin{frame}[fragile]
     \frametitle{Running snakemake}
     \begin{itemize}
-        \item If all your file are in the current directory:
+        \item If all your files are in the current directory:
             \begin{lstlisting}[language=bash]
     snakemake
             \end{lstlisting}
-        \item We can specify path of Snakefile and config file:
+        \item We can specify the path of Snakefile or a config file:
             \begin{lstlisting}[language=bash]
     snakemake -s path/to/Snakefile --configfile path/to/configfile
             \end{lstlisting}
@@ -371,7 +371,7 @@ rule vcf_filter:
         \begin{lstlisting}[language={}]
     snakemake -n
         \end{lstlisting}
-        \item Change config variable with argument:
+        \item Change config variable in command line:
         \begin{lstlisting}[language={}]
     snakemake --config markduplicates=false
         \end{lstlisting}
@@ -403,10 +403,24 @@ sample
     /local/gensoft2/exe/snakemake/3.5.4/bin/snakemake -p --cluster \
     "qsub -q pf4 -cwd -V -b y" --jobs 5
             \end{lstlisting}
+        \item Module load must be added inside rules.
     \end{itemize}
-    \begin{alertblock}{Warning}
-        Module load doesn't work inside snakemake, we must use absolute path for some software.
-    \end{alertblock}
+    \begin{block}{Snakefile}
+        \begin{lstlisting}
+rule bwa_mapping:
+    input:
+        ref = "genome.fa",
+        fastq = "sample_A.fastq.gz"
+    output:
+        "mapped_sample/sample_A.bam"
+    shell:
+        """
+        . /etc/profile.d/pasteur_modules.sh
+        module load bwa/0.7.5a
+        bwa mem {input.ref} {input.fastq} | samtools view -Sb - > {output}
+        """
+        \end{lstlisting}
+    \end{block}
 \end{frame}
 
 \begin{frame}[fragile]
