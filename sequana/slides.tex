@@ -95,7 +95,7 @@
 \title{Sequana: Motivations and Overview}
 \author[T.Cokelaer \& D.Desvillechabrol]{Thomas Cokelaer and Dimitri Desvillechabrol}
 \institute{Institut Pasteur}
-\date{March 23 2016}
+\date{March 22d 2016}
 
 \begin{document}
 
@@ -133,7 +133,9 @@
   \end{itemize}
  \end{block}
  \small 
- We are developing NGS pipelines like many others and have started to gather tools and information in a common repository.
+\pause
+ We are developing NGS pipelines like many others and have started to gather
+tools and information in a common repository called \textbf{Sequana}.
 \end{frame}
 
 
@@ -146,7 +148,7 @@
      \includegraphics[scale=0.05]{positive.png}\; Expertise\\
      \includegraphics[scale=0.05]{negative.png}\; Lack of \\
 	\begin{itemize}
-	 \item tracability ?
+	 \item traceability ?
 	 \item reproducibility ? 
 	 \item co-development ? 
 	 \item common framework ?
@@ -157,7 +159,7 @@
     \begin{itemize}
      \item A framework to combine or re-use existing pipelines
      \item Fast development (iterative process)
-     \item Continuous Integration and Quality Software (reproducibility, tracability, test, documentation)
+     \item Continuous Integration and Quality Software (reproducibility, traceability, test, documentation)
     \end{itemize}
     \end{block}
 
@@ -173,7 +175,7 @@
     \begin{block}{Enforce a common framework}
     \begin{itemize}
         \item Using Snakemake as a common language to design new pipelines
-        \item Provide reusable block of snakemake rules
+        \item Provide reusable snakemake rules
     \end{itemize} 
      \end{block}
 
@@ -287,20 +289,49 @@
     %\end{textblock*}
 \end{frame}
 
-\section{Contributions and links}
+\begin{frame}[fragile]
+
+Open the file report/index.html for example of the current report (v0.0.3)
+
+\end{frame}
+
+
+\section{Contributions}
 \begin{frame}{How to contribute ?}
 \begin{enumerate}
- \item First, transform existing pipelines into Snakefile and add them to Sequana.
+ \item transform existing pipelines into Snakefiles and add them to Sequana.
  \item Identify parts that can be transformed into modules
+ \item add tests
+ \item Benchmarks ?
+ \item complete documentation
+ \item Add data processing or visualisation tools 
  \item Other ideas welcome
  \end{enumerate}
- 
- \begin{block}{Links}
- \begin{itemize}
- \item  Join the github  : https://github.com/sequana/sequana    
- \item Doc on line on sequana.readthedocs.org
-\end{itemize}
- \end{block}
 \end{frame}
+
+
+
+\section{Summary}
+
+\begin{frame}[fragile]
+  \begin{block}{Summary}
+    \begin{itemize}
+      \item Sequana is used at biomics to share NGS pipelines (currently variants and fix contamination)
+      \item Ease design of new pipelines. 
+      \item Single entry point
+      \item share expertise and existing pipelines
+      \item automatic reports
+      \item reaching a high quality and trustable code
+    \end{itemize}
+   \end{block}
+ 
+  \begin{block}{Links}
+    \begin{itemize}
+      \item Join the github  : https://github.com/sequana/sequana    
+      \item Doc on line on sequana.readthedocs.org
+    \end{itemize}
+  \end{block}
+\end{frame}
+
 
 \end{document}
