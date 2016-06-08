@@ -1,0 +1,91 @@
+// The format can not be determined, please relaunch the script with the file_format argument
+digraph snakemake_dag {
+    graph[bgcolor=white, margin=0, nodesep=0.5, ranksep=0.5];
+    node[shape=box, style=rounded, fontname=sans,                 fontsize=12, penwidth=4];
+    edge[penwidth=2, color=grey];
+    subgraph cluster_0 {
+        color=white;
+        style="filled,rounded";
+        fontsize=30;
+	13 -> 1;
+	29 -> 1;
+	21 -> 0;
+	1 -> 6
+	22 -> 6
+	8 -> 6
+	11 -> 6
+	4 -> 11
+	21 -> 12
+	0 -> 14
+	16 -> 14
+	21 -> 14
+	6 -> 14
+	12 -> 14
+	29 -> 18
+	13 -> 18
+    }
+    subgraph cluster_1 {
+        color=white;
+        style="filled,rounded";
+        fontsize=30;
+	17 -> 3
+	27 -> 17
+    }
+    subgraph cluster_2 {
+        color=white;
+        style="filled,rounded";
+        fontsize=30;
+	20 -> 2
+	26 -> 2
+	18 -> 4
+	24 -> 7
+	4 -> 8
+	25 -> 15
+	4 -> 16
+	26 -> 19
+	28 -> 20
+    26 -> 28
+	19 -> 20
+	26 -> 20
+	4 -> 21
+	29 -> 22
+	13 -> 22
+	2 -> 23
+	26 -> 24
+	23 -> 25
+    }
+	0[label = "fastq_stats__cutadapt", color = "0.46 0.6 0.85", style="rounded"];
+	1[label = "fastq_stats__samples", color = "0.58 0.6 0.85", style="rounded"];
+	2[label = "freebayes", color = "0.38 0.6 0.85", style="rounded"];
+	3[label = "kraken_to_krona", color = "0.62 0.6 0.85", style="rounded"];
+	4[label = "bwa_bam_to_fastq", color = "0.10 0.6 0.85", style="rounded"];
+	5[label = "all", color = "0.60 0.6 0.85", style="rounded"];
+	6[label = "report_phix_removal", color = "0.06 0.6 0.85", style="rounded"];
+	7[label = "report_mapping", color = "0.44 0.6 0.85", style="rounded"];
+	8[label = "fastqc__phix", color = "0.65 0.6 0.85", style="rounded"];
+	11[label = "fastq_stats__phix", color = "0.35 0.6 0.85", style="rounded"];
+	12[label = "fastqc__cutadapt", color = "0.25 0.6 0.85", style="rounded"];
+	13[label = "fastq_sampling\ndataset: Hm2_GTGAAA_L005_R1_001.fastq.gz", color = "0.56 0.6 0.85", style="rounded"];
+	14[label = "pipeline_quality", color = "0.04 0.6 0.85", style="rounded"];
+	15[label = "report_vcf", color = "0.54 0.6 0.85", style="rounded"];
+	16[label = "identify_adapters", color = "0.27 0.6 0.85", style="rounded"];
+	17[label = "kraken_translate", color = "0.12 0.6 0.85", style="rounded"];
+	18[label = "bwa_mem__phix", color = "0.02 0.6 0.85", style="rounded"];
+	19[label = "create_sequence_dictionary", color = "0.52 0.6 0.85", style="rounded"];
+	20[label = "indel_realigner", color = "0.21 0.6 0.85", style="rounded"];
+	21[label = "cutadapt", color = "0.40 0.6 0.85", style="rounded"];
+	22[label = "fastqc__samples", color = "0.48 0.6 0.85", style="rounded"];
+	23[label = "vcf_filter", color = "0.19 0.6 0.85", style="rounded"];
+	24[label = "bedtools_genomecov", color = "0.08 0.6 0.85", style="rounded"];
+	25[label = "snpeff", color = "0.23 0.6 0.85", style="rounded"];
+	26[label = "bwa_mem__ref", color = "0.42 0.6 0.85", style="rounded"];
+	27[label = "kraken_contaminant", color = "0.15 0.6 0.85", style="rounded"];
+	28[label = "mark_duplicates", color = "0.17 0.6 0.85", style="rounded"];
+	29[label = "fastq_sampling\ndataset: Hm2_GTGAAA_L005_R2_001.fastq.gz", color = "0.56 0.6 0.85", style="rounded"];
+	3 -> 5
+	15 -> 5
+	7 -> 5
+	14 -> 5
+    21 ->27
+    21 ->26
+}            
