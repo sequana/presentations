@@ -144,9 +144,9 @@ and Rachel Legendre}
     \begin{block}{1. A Python library}
        \tiny
     \begin{itemize}
-        \item Pandas for data mining, matplotlib for visualisation and the Python ecosystem (e.g., scikit-learn)
+        \item Pandas for data mining, matplotlib for visualisation and the Python ecosystem (e.g., scipy)
         \item Tools to simplify the interface with external dependencies (e.g., snpEff, kraken)
-        \item More advanced NGS data structure (e.g., BAM reader with plotting functionalities)
+        \item More advanced NGS data structures (e.g., BAM reader with plotting functionalities)
     \end{itemize} 
     \end{block}
     \pause
@@ -206,6 +206,7 @@ and Rachel Legendre}
       \item quality\_taxon: phix removal + trimming (quality, adapters) + taxonomy
       \item variant\_calling: detection of variant  using FreeBayes
       \item denovo\_assembly: denovo assembly + coverage of the contigs + variant calling
+      \item ATAC-seq: in progress
       \item compressor: utility to convert FastQ recursively between different compression formats
     \end{itemize}
     
@@ -222,7 +223,7 @@ and Rachel Legendre}
 
 \begin{frame}[fragile]
     \frametitle{3. Reporting}
-    Each pipeline is associated with a HTML report. Reports can be re-used 
+    Each pipeline is associated with an HTML report. Reports can be re-used 
     outside of the pipelines (for instance in standalone app)
     \begin{block}{Inside a Snakefile}
     \begin{lstlisting}
@@ -274,15 +275,15 @@ and Rachel Legendre}
 
 \begin{frame}[fragile]
     \frametitle{snakefile storage}
-    Snakefiles are stored in the ./pipelines or ./rules directories and their path
+    Snakefiles are stored in the ./pipelines or ./rules directories and their paths
     can be retrieved automatically.
     \tiny
     \begin{block}{Snakefile storage and metadata}
     \begin{lstlisting}
-     >>> from sequana import snaketools 
+     >>> from sequana import Module, snaketools 
      >>> snaketools.rules.keys()
      ['bwa_mem_dynamic', 'cutadapt', 'dag', 'report_variant' ...
-     >>> m = snaketools.Module('quality_taxon')
+     >>> m = Module('quality_taxon')
      >>> m.overview
      "Quality pipeline and taxonomic search"
      >>> m.config
@@ -302,7 +303,7 @@ and Rachel Legendre}
 
 \begin{frame}[fragile]
  \frametitle{config file}
- Each pipeline include a config file. We could use json or yaml and decided 
+ Each pipeline includes a config file. We could use json or yaml and decided 
  to go for yaml, which is a bit easier to handle for end-users.
  
 \begin{block}{}
@@ -351,7 +352,7 @@ sections.
    \item In the directory of a pipeline (or rule), one can add a dedicated config 
    file and a README. By default the config file at the root of the directory is 
    used, otherwise the local config file is used.
-   \item We used \textit{dynamic rules}
+   \item In order to use a rule several times in a pipeline, we used \textit{dynamic rules}
    \item Optional rules have a \textbf{do} field in the config file
    \end{itemize}
  \end{block} 
@@ -382,7 +383,7 @@ sections.
   \item Name of the snakefile is stored in a local \_\_snakefile\_\_ variable, which can be
  used in rules that are included later on.
  \item pipeline can include pipeline
- \item abstract input and output in the rules
+ \item abstract input and output in the rules (no harcoded values or path)
  \end{itemize}
  \end{block}
 \end{frame}
@@ -414,15 +415,15 @@ About 1000 commits \\
     
     
     %\begin{textblock*}{7cm}(.5cm,3.5cm)
-        \includegraphics[scale=0.35]{images/commits}
+        \includegraphics[scale=0.35]{images/travis}
     %\end{textblock*}
 \end{frame}
 
 
 \begin{frame}[fragile]
     \frametitle{Documentation}
-    Fully documented and available on RTD: sequana.readthedocs.org
-    Uses Sphinx to documented the source code and provide user guide.
+    Fully documented and available on sequana.readthedocs.org
+    Uses Sphinx to document the source code and provides user guide.
     Updated automatically at each commits on the master branch.
 \begin{center}
 \includegraphics[scale=0.3]{images/rtd}
@@ -436,13 +437,13 @@ About 1000 commits \\
 \begin{frame}
 \begin{block}{Pipelines to come}
 \begin{itemize}
- \item PacBio was acquired recently. Therefore the next logical pipeline is to include
- a long reads pipeline (TC, DD). 
+ \item PacBio was acquired recently. Next logical pipeline is to include
+ a long-read dedicated pipeline (TC, DD). 
  \item Epigenomics
      \begin{itemize}
      \item Methylation
-      \item Chip-seq 
-      \item atac-seq 
+      \item ChIP-seq
+      \item ATAC-seq
      \end{itemize}
  \item RNA-related projects (RL)
      \begin{itemize}
