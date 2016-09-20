@@ -78,7 +78,8 @@
 %% Set up title ----------------------------------------------------------------
 
 \title{Sequana in a nutshell}
-\author[T.Cokelaer \& D.Desvillechabrol]{Thomas Cokelaer and Dimitri Desvillechabrol}
+\author[T.Cokelaer \& D.Desvillechabrol]{Thomas Cokelaer and Dimitri Desvillechabrol
+and Rachel Legendre}
 \institute{Institut Pasteur}
 \date{Sept 20th 2016}
 
@@ -413,7 +414,7 @@ About 1000 commits \\
     
     
     %\begin{textblock*}{7cm}(.5cm,3.5cm)
-        \includegraphics[scale=0.35]{sequana_quality.png}
+        \includegraphics[scale=0.35]{images/commits}
     %\end{textblock*}
 \end{frame}
 
@@ -437,8 +438,17 @@ About 1000 commits \\
 \begin{itemize}
  \item PacBio was acquired recently. Therefore the next logical pipeline is to include
  a long reads pipeline (TC, DD). 
- \item A Methylation pipeline for quality will be included (TC)
+ \item Epigenomics
+     \begin{itemize}
+     \item Methylation
+      \item Chip-seq 
+      \item atac-seq 
+     \end{itemize}
  \item RNA-related projects (RL)
+     \begin{itemize}
+     \item Portage of existing RNA-seq pipeline into a snakemake-framework
+     \item miRNA / RIBO-seq   
+     \end{itemize}
 \end{itemize}
 \end{block}
 
