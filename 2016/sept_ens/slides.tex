@@ -78,7 +78,7 @@
 %% Set up title ----------------------------------------------------------------
 
 \title{A variant calling workflow using snakemake framework}
-\author[T.Cokelaer \& D.Desvillechabrol]{Dimitri Desvillechabrol}
+\author[D.Desvillechabrol \& T.Cokelaer]{Dimitri Desvillechabrol and Thomas Cokelaer}
 \institute{Institut Pasteur}
 \date{Sept 26th 2016, ENS Paris}
 
@@ -150,13 +150,13 @@
     \end{block}
     \pause
     
-    \begin{exampleblock}{2. A framework to store/design pipelines}
+    \begin{block}{2. A framework to store/design pipelines}
     \tiny
     \begin{itemize}
         \item Using Snakemake as a common language to design new pipelines
         \item Provide reusable snakemake rules and modules
     \end{itemize} 
-     \end{exampleblock}
+     \end{block}
   \pause
   
     \begin{block}{3. A set of HTML reports}
@@ -177,99 +177,134 @@
     \end{block}
 \end{frame}
 
-\begin{frame}[fragile]
-    \frametitle{1. A Python library: example}
-    \begin{block}{}
-    \begin{lstlisting}
-     from sequana import BAM, sequana_data
-     datatest = sequana_data('test.bam', "testing")
-
-     # Use sequana.bamtools.BAM class to plot the MAPQ histogram
-     b = BAM(datatest)
-     b.plot_bar_mapq()
-    \end{lstlisting}
-    \end{block}
-    \centering{
-        \includegraphics[scale=0.35]{images/mapq.png}
-    }
-    
-\end{frame}    
-    
-
-\begin{frame}[fragile]
-    \frametitle{2. A framework to design pipelines}
-    \tiny
-    We currently have 4 end-user pipelines in snakemake format:
-    \begin{block}{}
+\begin{frame}[fragile]{What is Snakemake ?}
+    \begin{columns}
+    \begin{column}{0.6\textwidth}
     \begin{itemize}
-      \item quality\_taxon: phix removal + trimming (quality, adapters) + taxonomy
-      \item variant\_calling: detection of variant  using FreeBayes
-      \item denovo\_assembly: denovo assembly + coverage of the contigs + variant calling
-      \item ATAC-seq: in progress
-      \item compressor: utility to convert FastQ recursively between different compression formats
+        \item It is a workflow manager based on python
+        \begin{itemize}
+            \item Parallelization
+            \item Suspend/Resume
+            \item Simplify the workflow's conceptions
+            \item Decompose workflow into rules
+        \end{itemize}
     \end{itemize}
-    
-    \end{block}
-    and about 40 rules. 
-    
-    \begin{minipage}{100pc}
-            \includegraphics[scale=0.30]{images/quality_dag.png}
-            \includegraphics[scale=0.15]{images/denovo_dag.png}
-    \end{minipage}
-
-\end{frame}
-
-
-\begin{frame}[fragile]
-    \frametitle{3. Reporting}
-    Each pipeline is associated with an HTML report. Reports can be re-used 
-    outside of the pipelines (for instance in standalone app)
-    \begin{block}{Inside a Snakefile}
+    \begin{block}{Rule example}
     \begin{lstlisting}
-_freebayes__output = "freebayes/%s.vcf" % cfg.PROJECT
-
-rule freebayes:
+rule bedtools_genomecov:
     input:
-        bam = __freebayes__input,
-        ref = __bwa_mem_ref__reference
+        __bedtools_genomecov__input
     output:
-        vcf = __freebayes__output
-    log:
-        out = "logs/freebayes/stdout.logs",
-        err = "logs/freebayes/stderr.logs"
+        __bedtools_genomecov__output
     params:
-        freebayes = config["freebayes"]["options"]
+        options = config["bedtools"]["options"]
     shell:
         """
-        samtools index {input.bam} freebayes {params.freebayes} -f {input.ref} \
-        -b {input.bam} -v {output.vcf} > {log.out} 2> {log.err}
-    """
-   
+        bedtools genomecov {params.options} \
+        -ibam {input} > {output}
+        """ 
     \end{lstlisting}
-    \end{block} 
+    \end{block}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+        \includegraphics[scale=0.21]{images/variant_calling_dag}
+    \end{column}
+    \end{columns}
 \end{frame}
 
+\section{Variant calling}
 
-
-
-
-\begin{frame}
- \frametitle{snakemake usage }
- \tiny
- \begin{block}{}
-  \begin{itemize}
-   \item mention galaxy
-   \item interest of snakemake eg cluster, re-run rules, re-use pipelines
-   \end{itemize}
- \end{block} 
+\begin{frame}{The variant calling}
+    \begin{itemize}
+        \item Detect SNP/INDEL of a sequenced sample against a reference genome 
+            or assembled set of contigs
+        \begin{itemize}
+            \item Align reads on a reference
+            \item Mark duplicates and realign reads around INDEL
+            \item Run a variant caller to detect SNP and INDEL
+            \item Interpret results
+        \end{itemize}
+    \end{itemize}
 \end{frame}
 
+\begin{frame}{The pipeline}
+    \center
+    \includegraphics[scale=0.28]{images/variant_calling_dag}
+\end{frame}
 
+\begin{frame}{Mapping analysis}
+    \begin{itemize}
+        \item Check the quality of mapping
+    \end{itemize}
+    \center
+    \includegraphics[scale=0.4]{images/running_median}
+\end{frame}
 
+\begin{frame}{High and low coverage region detection}
+    \begin{textblock*}{10cm}(0.2cm,2cm)
+        \begin{itemize}
+            \item High coverage regions
+        \end{itemize}
+        \includegraphics[scale=0.195]{images/high_roi}
+    \end{textblock*}
+    \begin{textblock*}{10cm}(0.2cm, 5cm)
+        \begin{itemize}
+            \item Low coverage regions
+        \end{itemize}
+        \includegraphics[scale=0.145]{images/low_roi}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}{Javascript graphic}
+    \begin{itemize}
+        \item Use Javascript and HTML5 to do zoomable graphic
+    \end{itemize}
+    \includegraphics[scale=0.28]{images/js_graphic}
+\end{frame}
+
+\begin{frame}{Variant calling}
+    \begin{itemize}
+        \item Variants are detected with Freebayes
+        \item The python module PyVCF is used to filter variants
+    \end{itemize}
+    \includegraphics[scale=0.23]{images/freebayes}
+    \begin{itemize}
+        \item Variants are annotated with snpEff
+    \end{itemize}
+    \includegraphics[scale=0.18]{images/snpeff}
+\end{frame}
+
+\section{Usage}
+
+\begin{frame}[fragile]{Set the pipeline}
+    \begin{itemize}
+        \item One command line to initiate the pipeline
+    \end{itemize}
+    \begin{lstlisting}
+sequana --pipeline variant_calling --file1 R1.fastq.gz --file2 R2.fastq.gz \
+    --reference sequence.fasta --project project_1
+    \end{lstlisting}
+    \begin{itemize}
+        \item Create a directory with the project name
+        \item It contains all necessary file
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Run the pipeline}
+    \begin{itemize}
+        \item You just need to launch snakemake
+    \end{itemize}
+    \begin{lstlisting}
+snakemake -s variant_calling.rules --cluster "qsub -q queue -cwd -V" -j 6
+    \end{lstlisting}
+    \begin{itemize}
+        \item Snakemake is compatible with all job scheduler
+    \end{itemize}
+\end{frame}
 
 \section{Continuous integration}
 
-\begin{frame}[fragile]
+\begin{frame}
  \frametitle{Versioning}
 Sequana is available on github (github.com/sequana/sequana)
 
@@ -283,8 +318,8 @@ About 1000 commits \\
 
 
 
-\begin{frame}[fragile]
-    \frametitle{test suite}
+\begin{frame}
+    \frametitle{Test suite}
     \begin{block}{}
     Continuous Integration on Travis with 60 tests with 60\% coverage
     \end{block}
@@ -296,7 +331,7 @@ About 1000 commits \\
 \end{frame}
 
 
-\begin{frame}[fragile]
+\begin{frame}
     \frametitle{Documentation}
     Fully documented and available on sequana.readthedocs.org
     Uses Sphinx to document the source code and provides user guide.
@@ -312,16 +347,10 @@ About 1000 commits \\
 \section{Summary and Future Directions}
 \begin{frame}
 
-\begin{block}{Collaborations}
-\begin{itemize}
- \item jacques van helden - claire
-\end{itemize}
-\end{block}
-
 \begin{block}{Pipelines to come}
 \begin{itemize}
  \item PacBio was acquired recently. Next pipeline will include
- a long-read analysis (mapping) (TC, DD). 
+ a long-read analysis. 
 \end{itemize}
 \end{block}
 
