@@ -120,7 +120,7 @@
  \begin{block}{https://research.pasteur.fr/en/team/biomics/}
   \begin{itemize}
   \item De novo and targeted sequencing of viruses, prokaryotes and eukaryotes
-  \item Variant (SNP, indel, large rearrangements) detection
+  \item \textbf{Variant (SNP, indel, large rearrangements) detection}
   \item Human and Mouse SNP detection by array
   \item Transcriptional analysis (RNA-Seq) for both prokaryotes and eukaryotes
   \item 16S and deep-sequencing metagenomic studies (mouse, human, and other environments)
@@ -214,20 +214,20 @@ rule bedtools_genomecov:
 
 \section{Variant calling}
 
-\begin{frame}{The variant calling}
+\begin{frame}{Variant calling overview}
     \begin{itemize}
-        \item Detect SNP/INDEL of a sequenced sample against a reference genome 
+        \item Detect SNPs/INDELs of a sequenced sample against a reference genome 
             or assembled set of contigs
         \begin{itemize}
             \item Align reads on a reference
-            \item Mark duplicates and realign reads around INDEL
-            \item Run a variant caller to detect SNP and INDEL
+            \item Mark duplicates and realign reads around INDELs
+            \item Run a variant caller to detect SNPs and INDELs
             \item Interpret results
         \end{itemize}
     \end{itemize}
 \end{frame}
 
-\begin{frame}{The pipeline}
+\begin{frame}{The variant calling pipeline}
     \center
     \includegraphics[scale=0.28]{images/variant_calling_dag}
 \end{frame}
@@ -240,7 +240,7 @@ rule bedtools_genomecov:
     \includegraphics[scale=0.4]{images/running_median}
 \end{frame}
 
-\begin{frame}{High and low coverage region detection}
+\begin{frame}{High and low coverage regions detection}
     \begin{textblock*}{10cm}(0.2cm,2cm)
         \begin{itemize}
             \item High coverage regions
@@ -255,9 +255,9 @@ rule bedtools_genomecov:
     \end{textblock*}
 \end{frame}
 
-\begin{frame}{Javascript graphic}
+\begin{frame}{Javascript interface}
     \begin{itemize}
-        \item Use Javascript and HTML5 to do zoomable graphic
+        \item Implemented a Javascript and HTML5 visualisation toolbox with zoomable plot
     \end{itemize}
     \includegraphics[scale=0.28]{images/js_graphic}
 \end{frame}
@@ -276,7 +276,7 @@ rule bedtools_genomecov:
 
 \section{Usage}
 
-\begin{frame}[fragile]{Set the pipeline}
+\begin{frame}[fragile]{Set up the pipeline}
     \begin{itemize}
         \item One command line to initiate the pipeline
     \end{itemize}
@@ -285,8 +285,8 @@ sequana --pipeline variant_calling --file1 R1.fastq.gz --file2 R2.fastq.gz \
     --reference sequence.fasta --project project_1
     \end{lstlisting}
     \begin{itemize}
-        \item Create a directory with the project name
-        \item It contains all necessary file
+        \item The sequana executable creates a directory with the project name
+        \item The directory contains all the necessary files (config, snakefile,~\dots)
     \end{itemize}
 \end{frame}
 
@@ -298,7 +298,7 @@ sequana --pipeline variant_calling --file1 R1.fastq.gz --file2 R2.fastq.gz \
 snakemake -s variant_calling.rules --cluster "qsub -q queue -cwd -V" -j 6
     \end{lstlisting}
     \begin{itemize}
-        \item Snakemake is compatible with all job scheduler
+        \item Snakemake is compatible with all job schedulers
     \end{itemize}
 \end{frame}
 
@@ -306,13 +306,11 @@ snakemake -s variant_calling.rules --cluster "qsub -q queue -cwd -V" -j 6
 
 \begin{frame}
  \frametitle{Versioning}
-Sequana is available on github (github.com/sequana/sequana)
-
-About 1000 commits \\
+Sequana is available on GitHub (github.com/sequana/sequana). Started in Feb. 2016. 
+About 1000 commits. 260 issues created (15 currently open) \\
 \begin{center}
 \includegraphics[scale=0.2]{images/commits}
 \end{center}
-260 issues (15 open).
 
 \end{frame}
 
@@ -333,9 +331,9 @@ About 1000 commits \\
 
 \begin{frame}
     \frametitle{Documentation}
-    Fully documented and available on sequana.readthedocs.org
-    Uses Sphinx to document the source code and provides user guide.
-    Updated automatically at each commits on the master branch.
+    Fully documented and available on sequana.readthedocs.org~.
+    Uses Sphinx (RST syntax) to document the source code and provides user guide.
+    Updated automatically at each commits.
 \begin{center}
 \includegraphics[scale=0.3]{images/rtd}
 \end{center}
@@ -350,14 +348,15 @@ About 1000 commits \\
 \begin{block}{Pipelines to come}
 \begin{itemize}
  \item PacBio was acquired recently. Next pipeline will include
- a long-read analysis. 
+ a long-read analysis. Creation of snakefile pipelines to compare performance 
+ of different long-read software.
 \end{itemize}
 \end{block}
 
 \begin{block}{Future developments}
  \begin{itemize}
-  \item GUI 
-  \item Docker
+  \item Simple GUI to ease the creation of the analysis pipelines.
+  \item Docker images to help integration in different platforms.
  \end{itemize}
 \end{block}
  \end{frame}
