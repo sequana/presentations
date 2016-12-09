@@ -1,6 +1,6 @@
 \documentclass{beamer}
 
-%% Use package -----------------------------------------------------------------
+%% Use package ----------------------------------------------------------------
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
@@ -10,7 +10,7 @@
 \usepackage{listings}
 \usepackage{svg}
 
-%% Beamer customization---------------------------------------------------------
+%% Beamer customization--------------------------------------------------------
 
 \usepackage{xcolor}
 \usetheme{Warsaw}
@@ -58,7 +58,7 @@
   }
 }
 
-%% Define Snakemake ------------------------------------------------------------
+%% Define Snakemake -----------------------------------------------------------
 
 \definecolor{eclipseBlue}{RGB}{42,0.0,255}
 \definecolor{eclipseGreen}{RGB}{63,127,95}
@@ -66,8 +66,8 @@
 
 \lstset{language=Python}
 \lstset{
-    basicstyle=\tiny\ttfamily,
-    morekeywords={rule, output, shell, params, run, configfile, temp},
+    basicstyle=\scriptsize\ttfamily,
+    morekeywords={rule, output, shell, params, run, configfile, temp, log},
     showstringspaces=false,
     commentstyle=\color{eclipseGreen}, % style of comments
     keywordstyle=\color{eclipsePurple}, % style of keywords
@@ -75,9 +75,9 @@
 }
 
 
-%% Set up title ----------------------------------------------------------------
+%% Set up title ---------------------------------------------------------------
 
-\title{Sequana: a framework based on snakemake to ease pipelines conception}
+\title[Sequana]{Sequana: a set of flexible genomic pipelines for processing and reporting NGS analysis}
 \author[D.Desvillechabrol]{Dimitri Desvillechabrol}
 \institute{Institut Pasteur}
 \date{Dec 12th 2016, Institut Pasteur}
@@ -97,7 +97,7 @@
 
 \begin{document}
 
-%% Title slide -----------------------------------------------------------------
+%% Title slide ----------------------------------------------------------------
 
 \begin{frame}[plain]
     \titlepage
@@ -106,7 +106,7 @@
     \end{textblock*}
 \end{frame}
 
-%% Slides ----------------------------------------------------------------------
+%% Slides ---------------------------------------------------------------------
 
 \section{Motivation}
 
@@ -120,256 +120,180 @@
  \begin{block}{https://research.pasteur.fr/en/team/biomics/}
   \begin{itemize}
   \item De novo and targeted sequencing of viruses, prokaryotes and eukaryotes
-  \item \textbf{Variant (SNP, indel, large rearrangements) detection}
+  \item Variant (SNP, indel, large rearrangements) detection
   \item Human and Mouse SNP detection by array
   \item Transcriptional analysis (RNA-Seq) for both prokaryotes and eukaryotes
   \item 16S and deep-sequencing metagenomic studies (mouse, human, and other environments)
   \item Bottom-up whole proteomic analysis and quantification
   \item Analysis of a wide range of post-translational modifications
   \item Determination of the dynamics of protein complexes.
-  \item Epigenetics (methylation studies)
+  \item Epigenetics (CHIP-Seq, methylation studies)
   \item Projects involving two or more techniques (i.e. proteogenomics, single-cell DNA/RNA analysis)
   \end{itemize}
  \end{block}
  \small 
 \end{frame}
 
+\section{Pipelines}
 
-
-\section{Sequana project}
-
-\begin{frame}
-    \frametitle{What is Sequana ?}
-    \begin{block}{1. A Python library}
-       \tiny
-    \begin{itemize}
-        \item Pandas for data mining, matplotlib for visualisation and the Python ecosystem (e.g., scipy)
-        \item Tools to simplify the interface with external dependencies (e.g., snpEff, kraken)
-        \item More advanced NGS data structures (e.g., BAM reader with plotting functionalities)
-    \end{itemize} 
-    \end{block}
-    \pause
-    
-    \begin{block}{2. A framework to store/design pipelines}
-    \tiny
-    \begin{itemize}
-        \item Using Snakemake as a common language to design new pipelines
-        \item Provide reusable snakemake rules and modules
-    \end{itemize} 
-     \end{block}
-  \pause
-  
-    \begin{block}{3. A set of HTML reports}
-    \tiny
-    \begin{itemize}
-	\item We use JINJA templating to re-use HTML templates
-    \end{itemize} 
-    \end{block}
-  \pause  
-    \begin{block}{4. A suite of standalone applications}
-    \tiny
-    \begin{itemize}
-	\item sequana (create pipeline and config file locally)
-	\item sequana\_coverage
-	\item sequana\_mapping
-	\item \dots
-    \end{itemize} 
-    \end{block}
-    \begin{block}{5. A  Graphical User Interface}
-        \tiny
-        \begin{itemize}
-            \item GUI developed in PyQT5 and python
-        \end{itemize}
+\begin{frame}{Pipelines available in Sequana}
+    \begin{textblock*}{5cm}(0.3cm,1.3cm)
+        \includegraphics[scale=0.215]{images/pipelines}
+    \end{textblock*}
 \end{frame}
 
-\begin{frame}[fragile]{What is Snakemake ?}
-    \begin{columns}
-    \begin{column}{0.6\textwidth}
+\begin{frame}[fragile]{Rules specificity: input and output are variable}
     \begin{itemize}
-        \item It is a workflow manager based on python
-        \begin{itemize}
-            \item Parallelization
-            \item Suspend/Resume
-            \item Simplify the workflow's conceptions
-            \item Decompose workflow into rules
-        \end{itemize}
-    \end{itemize}
-    \begin{block}{Rule example}
-    \begin{lstlisting}
-rule bedtools_genomecov:
+        \item Rules are generic and easily reusable
+        \begin{block}{mark\_duplicates.rules}
+        \begin{lstlisting}
+rule mark_duplicates:
     input:
-        __bedtools_genomecov__input
+        __mark_duplicates__input
     output:
-        __bedtools_genomecov__output
-    params:
-        options = config["bedtools"]["options"]
-    shell:
-        """
-        bedtools genomecov {params.options} \
-        -ibam {input} > {output}
-        """ 
-    \end{lstlisting}
-    \end{block}
-    \end{column}
-    \begin{column}{0.4\textwidth}
-        \includegraphics[scale=0.21]{images/variant_calling_dag}
-    \end{column}
-    \end{columns}
-\end{frame}
-
-\section{Variant calling}
-
-\begin{frame}{Variant calling overview}
-    \begin{itemize}
-        \item Detect SNPs/INDELs of a sequenced sample against a reference genome 
-            or assembled set of contigs
-        \begin{itemize}
-            \item Align reads on a reference
-            \item Mark duplicates and realign reads around INDELs
-            \item Run a variant caller to detect SNPs and INDELs
-            \item Interpret results
-        \end{itemize}
+        bam = __mark_duplicates__output,
+        metrics = __mark_duplicates__metrics
+    log:
+        out = __mark_duplicates__log_std,
+        err = __mark_duplicates__log_err
+        \end{lstlisting}
+        \end{block}
     \end{itemize}
 \end{frame}
 
-\begin{frame}{The variant calling pipeline}
-    \center
-    \includegraphics[scale=0.28]{images/variant_calling_dag}
-\end{frame}
-
-\begin{frame}{Mapping analysis}
+\begin{frame}[fragile]{Dynamics rules}
     \begin{itemize}
-        \item Check the quality of mapping
+        \item Each rules must be unique in a pipeline
+        \begin{alertblock}{}
+        Some pipeline must use multiple times one rules like fastqc in quality control pipeline
+        \end{alertblock}
+        \item These rules are templatized to become dynamics:
+        \begin{block}{quality\_control.rules}
+        \begin{lstlisting}
+exec(open(sequana.modules["fastqc"], "r").read())
+        ...
+include: fastqc_dynamic("samples", manager)
+        ...
+include: fastqc_dynamic("phix", manager)
+        ...
+include: fastqc_dynamic(adapter_removal, manager)
+        \end{lstlisting}
+        \end{block}
     \end{itemize}
-    \center
-    \includegraphics[scale=0.4]{images/running_median}
-\end{frame}
-
-\begin{frame}{High and low coverage regions detection}
-    \begin{textblock*}{10cm}(0.2cm,2cm)
-        \begin{itemize}
-            \item High coverage regions
-        \end{itemize}
-        \includegraphics[scale=0.195]{images/high_roi}
-    \end{textblock*}
-    \begin{textblock*}{10cm}(0.2cm, 5cm)
-        \begin{itemize}
-            \item Low coverage regions
-        \end{itemize}
-        \includegraphics[scale=0.145]{images/low_roi}
-    \end{textblock*}
-\end{frame}
-
-\begin{frame}{Javascript interface}
-    \begin{itemize}
-        \item Implemented a Javascript and HTML5 visualisation toolbox with zoomable plot
-    \end{itemize}
-    \includegraphics[scale=0.28]{images/js_graphic}
-\end{frame}
-
-\begin{frame}{Variant calling}
-    \begin{itemize}
-        \item Variants are detected with Freebayes
-        \item The python module PyVCF is used to filter variants
-    \end{itemize}
-    \includegraphics[scale=0.23]{images/freebayes}
-    \begin{itemize}
-        \item Variants are annotated with snpEff
-    \end{itemize}
-    \includegraphics[scale=0.18]{images/snpeff}
 \end{frame}
 
 \section{Usage}
 
-\begin{frame}[fragile]{Set up the pipeline}
+\begin{frame}[fragile]{Using command line}
     \begin{itemize}
         \item One command line to initiate the pipeline
     \end{itemize}
-    \begin{lstlisting}
-sequana --pipeline variant_calling --file1 R1.fastq.gz --file2 R2.fastq.gz \
-    --reference sequence.fasta --project project_1
+    \begin{exampleblock}{Shell}
+    \begin{lstlisting}[language={}]
+    sequana --pipeline variant_calling \
+            --input-directory path/to/sample/ \
+            --reference sequence.fasta \
+            --output-directory analysis/
     \end{lstlisting}
+    \end{exampleblock}
     \begin{itemize}
         \item The sequana executable creates a directory with the project name
-        \item The directory contains all the necessary files (config, snakefile,~\dots)
+        \item The directory contains all the necessary files (config, snakefile)
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Run the pipeline}
-    \begin{itemize}
-        \item You just need to launch snakemake
-    \end{itemize}
-    \begin{lstlisting}
-snakemake -s variant_calling.rules --cluster "qsub -q queue -cwd -V" -j 6
-    \end{lstlisting}
-    \begin{itemize}
-        \item Snakemake is compatible with all job schedulers
-    \end{itemize}
+
+\section{Continuous Integration}
+
+\begin{frame}{Versioning, Test and Documentation}
+\begin{itemize}
+    \item Sequana is available on GitHub (github.com/sequana/sequana)
+    \item Continuous Integration on Travis with 60 tests with 60\% coverage
+    \item Documentation available on sequana.readthedocs.org~.
+        \begin{itemize}
+            \item Uses Sphinx (RST syntax) to document the source code and provides user guide.
+            \item Updated automatically at each commits
+        \end{itemize}
+\end{itemize}
 \end{frame}
 
-\section{Continuous integration}
+\section{GUI}
 
-\begin{frame}
- \frametitle{Versioning}
-Sequana is available on GitHub (github.com/sequana/sequana). Started in Feb. 2016. 
-About 1000 commits. 260 issues created (15 currently open) \\
-\begin{center}
-\includegraphics[scale=0.2]{images/commits}
-\end{center}
+\begin{frame}{GUI to simplify the usage of snakemake}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
 
+            \only<1>{\includegraphics[scale=0.25]{images/sequana_init}}
+
+            \only<2>{\includegraphics[scale=0.25]{images/choose_pipeline}}
+
+            \only<3>{\includegraphics[scale=0.25]{images/choose_input_output}}
+
+            \only<4>{\includegraphics[scale=0.25]{images/sequana_pipeline}}
+
+            \only<5>{\includegraphics[scale=0.25]{images/sequana_running}}
+            
+            \only<6>{\includegraphics[scale=0.25]{images/sequana_finish}}
+
+            \only<7>{\includegraphics[scale=0.3125]{images/sequana_open_report}}
+
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \only<1>{
+                \begin{itemize}
+                    \item Interface developed with PyQT5 and python
+                    \item Wrap our snakemake pipeline to ease the usage
+                    \item Usable on our cluster
+                \end{itemize}
+            }
+            \only<2-6>{
+            \begin{enumerate}
+                \item<2-6> Choose a pipeline
+                \item<3-6> Set input and output
+                \item<4-6> Fill the config formular
+                \item<5-6> Run the pipeline
+                \item<6> Finished !
+            \end{enumerate}
+            }
+            \only<7>{
+                \includegraphics[scale=0.2]{images/report_toto}
+            }
+        \end{column}
+    \end{columns}
 \end{frame}
 
+\begin{frame}{Ease the pipeline manipulation and viewing}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
 
+            \only<1>{\includegraphics[scale=0.3125]{images/sequana_show_dag}}
 
-\begin{frame}
-    \frametitle{Test suite}
-    \begin{block}{}
-    Continuous Integration on Travis with 60 tests with 60\% coverage
-    \end{block}
-    
-    
-    %\begin{textblock*}{7cm}(.5cm,3.5cm)
-        \includegraphics[scale=0.35]{images/travis}
-    %\end{textblock*}
+            \only<2>{\includegraphics[scale=0.3125]{images/unactivate_snpeff}}
+
+            \only<3>{\includegraphics[scale=0.3125]{images/starting_until}}
+
+        \end{column}
+        \begin{column}{0.5\textwidth}
+
+            \only<1>{\includegraphics[scale=0.20]{images/full_dag}}
+
+            \only<2>{\includegraphics[scale=0.21]{images/dag_without_snpeff}}
+
+            \only<3>{\includegraphics[scale=0.24]{images/dag_report_mapping}}
+
+        \end{column}
+
+    \end{columns}
 \end{frame}
-
-
-\begin{frame}
-    \frametitle{Documentation}
-    Fully documented and available on sequana.readthedocs.org~.
-    Uses Sphinx (RST syntax) to document the source code and provides user guide.
-    Updated automatically at each commits.
-\begin{center}
-\includegraphics[scale=0.3]{images/rtd}
-\end{center}
-\end{frame}
-
-
-
 
 \section{Summary and Future Directions}
+
 \begin{frame}
-
-\begin{block}{Pipelines to come}
-\begin{itemize}
- \item PacBio was acquired recently. Next pipeline will include
- a long-read analysis. Creation of snakefile pipelines to compare performance 
- of different long-read software.
-\end{itemize}
-\end{block}
-
-\begin{block}{Future developments}
- \begin{itemize}
-  \item Simple GUI to ease the creation of the analysis pipelines.
-  \item Docker images to help integration in different platforms.
- \end{itemize}
-\end{block}
- \end{frame}
+    Timeline of sequana development with future development
+\end{frame}
 
 \begin{frame}{Acknowledgement}
-    Biomics team (Sean Kennedy) in particular Christiane Bouchier.
+    %Biomics team (Sean Kennedy) in particular Christiane Bouchier.
 \end{frame}
 
 \end{document}
-
-
