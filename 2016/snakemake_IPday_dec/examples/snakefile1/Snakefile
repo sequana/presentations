@@ -1,0 +1,7 @@
+# Simple case with only one input file
+
+rule spectrogram:
+    input: "DOLPHINS.wav"
+    output: "DOLPHINS.png"
+    shell: "python spectrogram.py {input}"
+

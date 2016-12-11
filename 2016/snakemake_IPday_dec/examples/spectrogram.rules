@@ -1,0 +1,31 @@
+# Data files can be found here for example:
+#  - http://www.nefsc.noaa.gov/psb/acoustics/sounds.html
+#  - http://www.dosits.org/animals/useofsound/mammalscommunicate/individualspecific/
+configfile: "config.yaml"
+
+samples = config['samples']
+window  = config['windows']
+
+rule all:
+    input: 
+        expand("data/{dataset}_{window}.png", dataset=samples, window=window),
+        "server.ready"
+
+rule server:
+    output: touch("server.ready")
+    params:
+        port=config['port']
+    run:
+        from easydev import browser
+        browser.browse("http://127.0.0.1:%s" % params['port'])
+
+rule spectrogram:
+    input: "data/{dataset}.wav"
+    output: "data/{dataset}_{window}.png"
+    log: "logs/{dataset}_{window}.log"
+    shell: "python spectrogram.py {input} {wildcards.window} > {log}"
+
+onsuccess:
+    from myapp import SpecExample
+    app = SpecExample(samples, window, "data")
+    app.launch(port=config['port'])

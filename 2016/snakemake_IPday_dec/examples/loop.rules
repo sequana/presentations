@@ -1,0 +1,9 @@
+# This does not work. The content of test.txt is erased
+# simply because input is the same as output
+rule all:
+    input: "test.txt"
+
+rule A:
+    input: "test.txt"
+    output: touch("test.txt")
+    message: "okido"

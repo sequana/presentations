@@ -1,0 +1,19 @@
+# Usage of double wildcards and variables
+
+configfile: "config.yaml"
+
+rule all:
+    input: expand("{name}_{ws}.png", name=config['samples'], ws=config['windows'])
+
+rule spectrogram:
+    input: "{dataset}.wav"
+    output: "{dataset}_{window}.png"
+    shell: 
+        "python spectrogram.py {input} {wildcards.window}"
+
+rule clean:
+    shell: "rm -f DOLPHINS*png WHALES*png DOL*wav WHALE*wav"
+
+rule copy:
+    output: "{dataset}.wav"
+    shell: "cp ../data/{wildcards.dataset}.wav ."

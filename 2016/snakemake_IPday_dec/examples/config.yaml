@@ -1,0 +1,6 @@
+# for the spectrogram.rules
+
+samples: ["DOLPHINS", "WHALES"]
+windows: [512,1024,2048,4096]
+port: 9093
+

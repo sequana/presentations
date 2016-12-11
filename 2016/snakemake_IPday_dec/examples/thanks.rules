@@ -1,0 +1,11 @@
+HELPERS = [
+    "Dimitri Desvillechabrol",
+    "Rachel Legendre",
+    "Christiane Bouchier",
+    "The bioinformatics and biostatistics Hub (IP)"]
+
+rule thank:
+    input: expand("{helpers}", helpers=HELPERS)
+
+rule you:
+    output: temp(touch("{to}"))

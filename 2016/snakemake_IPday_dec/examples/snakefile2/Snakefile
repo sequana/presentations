@@ -1,0 +1,16 @@
+# Usage of wildcards
+
+rule all:
+    input: ["DOLPHINS.png", "WHALES.png"]
+
+rule spectrogram:
+    input: "{dataset}.wav"
+    output: "{dataset}.png"
+    shell: "python spectrogram.py {input}"
+
+rule clean:
+    shell: "rm -f DOLPHINS*png WHALES*png WHALES.wav DOLPHINS.wav"
+
+rule copy:
+    output: "{dataset}.wav"
+    shell: "cp ../data/{wildcards.dataset}.wav ."
