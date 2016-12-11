@@ -7,8 +7,8 @@ samples = config['samples']
 window  = config['windows']
 
 rule all:
-    input: 
-        expand("data/{dataset}_{window}.png", dataset=samples, window=window),
+    input:
+        expand("{dataset}_{window}.png", dataset=samples, window=window),
         "server.ready"
 
 rule server:
@@ -20,12 +20,21 @@ rule server:
         browser.browse("http://127.0.0.1:%s" % params['port'])
 
 rule spectrogram:
-    input: "data/{dataset}.wav"
-    output: "data/{dataset}_{window}.png"
+    input: "{dataset}.wav"
+    output: "{dataset}_{window}.png"
     log: "logs/{dataset}_{window}.log"
     shell: "python spectrogram.py {input} {wildcards.window} > {log}"
 
+rule copy:
+    output: "{dataset}.wav"
+    shell: "cp ../data/{wildcards.dataset}.wav ."
+
+rule clean:
+    shell: "rm -f *png *.wav"
+
 onsuccess:
-    from myapp import SpecExample
-    app = SpecExample(samples, window, "data")
-    app.launch(port=config['port'])
+    import glob
+    if len(glob.glob("*.png")):
+        from myapp import SpecExample
+        app = SpecExample(samples, window, ".")
+        app.launch(port=config['port'])
