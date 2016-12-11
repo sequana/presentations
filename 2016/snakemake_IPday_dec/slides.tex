@@ -1,5 +1,7 @@
 \documentclass{beamer}
-
+%21.39
+%21.52
+%22.07
 %% Use package -----------------------------------------------------------------
 
 \usepackage[T1]{fontenc}
@@ -480,7 +482,10 @@ rule spectrogram:
         \end{lstlisting}
          \end{block}        
           \end{minipage}
- \end{center}
+          \end{center}
+\vspace{1cm}          
+Save the file into a file called \textbf{Snakefile}          
+ 
 \end{frame}
 
 % -------------------------------
@@ -488,11 +493,9 @@ rule spectrogram:
 \begin{frame}[fragile]
 \frametitle{Execution}
 
-      \begin{block}{Execution (in a shell)}
+      \begin{block}{In a shell, type:}
 	  \begin{lstlisting}[basicstyle=\large]
 	  snakemake
-	  snakemake -s Snakefile
-	  snakemake -s spectrogram.rules
 	  \end{lstlisting}
       \end{block}
     \begin{block}{Stdout}
@@ -606,30 +609,6 @@ rule spectrogram:
 \end{frame}
   
         
-
-\begin{frame}[fragile]
-    \frametitle{Running snakemake}
-      If all your files are in the current directory:
-            \begin{lstlisting}[language=bash]
-            snakemake
-            \end{lstlisting}
-      If you want to run on 4 cores:
-            
-            \begin{lstlisting}[language=bash]
-            snakemake --cores 4
-            \end{lstlisting}
-      Dry run      
-            \begin{lstlisting}[language=bash]            
-            snakemake -n
-            \end{lstlisting}
-      Dry run and print shell commands
-            
-	  \begin{lstlisting}[language=bash]            
-            snakemake -n -p
-          \end{lstlisting}  
-                
-\end{frame}
-
 % ----------------------------------------------
 
 \begin{frame}[fragile]
@@ -765,20 +744,7 @@ onsuccess:
 \frametitle{demo}
 Get materials from  
 
-\url{https://github.com/sequana/sequana_presentations/2016/snakemake_IPday_dec/examples}
-\begin{block}{}
-    \begin{lstlisting}[basicstyle=\large]
-snakemake -s spectrogram.rules \
-          --configfile config.yaml \
-          --cores 2  \
-          --forceall
-\end{lstlisting}
-\end{block}
-\end{frame}
-
-% ----------------------------------------------------------------
-
-\begin{frame}
+\url{https://github.com/sequana/presentations/tree/master/2016/snakemake_IPday_dec/examples/demo}
 \begin{block}{}
  \includegraphics[scale=0.32]{images/results.png}
 \end{block}
@@ -819,7 +785,7 @@ determined via breadth-first-search on DAG of jobs
 
 
 \begin{frame}[fragile]
-\frametitle{threading}
+\frametitle{Threading}
 Disjoint paths in the DAG of jobs can be executed in parallel using -\--cores 
 argument:
 \begin{lstlisting}
@@ -843,7 +809,7 @@ We can be more specific inside the rules:
  % ----------------------------------------------
  
 \begin{frame}[fragile]
-\frametitle{resources (memory)}
+\frametitle{Resources (memory)}
 We can be specific about memory used by a job with the resources keyword:
 \begin{lstlisting}
         rule bwa_mapping:
@@ -903,7 +869,7 @@ snakemake --cluster "sbatch --qos fast" --jobs 100
 
 
 \begin{frame}
-\frametitle{other features}
+\frametitle{Other features}
 
 \begin{itemize}
 \item handles temporary and protected files
@@ -1011,9 +977,9 @@ Syntax is makefile syntax so it must be a dag. No loop
         \item This talk and materials
         \\
         {\normalsize All snakefiles and data files to play 
-	  around and available on}
-        {\tiny https://github.com/sequana/presentations/2016/snakemake}       
-        
+	  around and available on
+        {\tiny https://github.com/sequana/presentations/2016/snakemake\_IPday\_dec}       
+        }
     \end{itemize}
     
     \begin{block}{Snakemake Citations}
