@@ -133,27 +133,27 @@
         \only<1> 
         {
             \begin{figure}
-                \includegraphics[width=\textwidth,height=0.6\textheight]{dag_0.png}
+                \includegraphics[width=\textwidth,height=0.6\textheight]{images/dag_0.png}
                 \caption[1]{}
             \end{figure}                
         }
         \only<2> 
         {
             \begin{figure}
-                \includegraphics[width=\textwidth,height=0.6\textheight]{dag_1.png}
+                \includegraphics[width=\textwidth,height=0.6\textheight]{images/dag_1.png}
                 \caption[1]{Ideal for embarassingly parallel problem}
             \end{figure}                
         }\only<3> 
         {
             \begin{figure}
-                \includegraphics[width=\textwidth,height=0.6\textheight]{dag_2.png}
+                \includegraphics[width=\textwidth,height=0.6\textheight]{images/dag_2.png}
                 \caption[1]{Ideal for embarassingly parallel problem}
             \end{figure}                
         }
         \only<4> 
         {
             \begin{figure}
-                \includegraphics[width=\textwidth,height=0.6\textheight]{dag_wrong2.png}
+                \includegraphics[width=\textwidth,height=0.6\textheight]{images/dag_wrong2.png}
                 \caption[2]{Requires a DAG (no self loop of feedback loop allowed !)}
             \end{figure}
         }
@@ -192,8 +192,7 @@
     \item  Nice logging system to follows the status
     \item  Suspend /  Resume 
     \item  Various code can be integrated: R, bash, and of course Python
-   \end{itemize}   
- 
+   \end{itemize}
 \end{frame}
 
 
@@ -206,7 +205,7 @@
 \begin{frame}[plain]
  \centering
  \begin{Huge}
- From sequential commands to dependent rules: a toy example
+ From sequential commands to dependent rule graph: \\ a toy example
  \end{Huge}
 \end{frame}
 
@@ -218,7 +217,7 @@
 Let us consider two FastQ files (independent samples) and let us map them on a reference (phiX174). The two 
 sample files are named sample\_A.fastq.gz and sample\_B.fastq.gz
   \begin{figure}
-\includegraphics[width=0.5\textwidth, height=0.5\textheight]{tutorial/dag.png}
+\includegraphics[width=0.5\textwidth, height=0.5\textheight]{toy_example/dag.png}
   \end{figure}
 \end{frame}
 
@@ -441,15 +440,28 @@ The problem:
  \item convert a WAV signal into a frequency plot (spectrogram)
  \item Repeat for N input files
  \item Effect of the time window parameter W on the resolution
+ \item Add an HTML / server report
 \end{itemize}
- \includegraphics[scale=0.28]{images/dolphin_timeseries.png} 
- \includegraphics[height=4cm, width=0.55\textwidth]{examples/data/DOLPHINS_1024.png}
+
+\begin{columns}
+
+\begin{column}{5cm}
+\begin{figure}
+\includegraphics[height=4cm, width=\textwidth]{images/dolphin_timeseries.png} 
+\caption{Input: a time series in WAV or OGG format}
+\end{figure}
+\end{column}
+
+\begin{column}{6cm}
+\begin{figure}
+\includegraphics[height=4cm, width=1\textwidth]{images/DOLPHINS_1024.png}
+\caption{Output: a PNG image representing the time-frequency content}
+\end{figure}
+\end{column}
+
+\end{columns}
+
 \end{frame}
-
-
-
-
-
 
 
 
@@ -467,10 +479,7 @@ rule spectrogram:
     shell: "python spectrogram.py {input}"
         \end{lstlisting}
          \end{block}        
-        \begin{block}{Snakefile}
-      Save the rule in a file called \textbf{Snakefile}. 
-      \end{block}
-    \end{minipage}
+          \end{minipage}
  \end{center}
 \end{frame}
 
@@ -478,43 +487,26 @@ rule spectrogram:
 
 \begin{frame}[fragile]
 \frametitle{Execution}
-\begin{columns}[T]
-\begin{column}[T]{5.3cm}
-  \begin{block}{}
-            \begin{lstlisting}
-rule spectrogram:
-    input:  "DOLPHINS.wav"
-    output: "DOLPHINS.png"
-    shell: "python spectrogram.py {input}"
-    \end{lstlisting}
-  \end{block}
-\end{column}
 
-\begin{column}{5.8cm}
       \begin{block}{Execution (in a shell)}
 	  \begin{lstlisting}[basicstyle=\large]
 	  snakemake
 	  snakemake -s Snakefile
+	  snakemake -s spectrogram.rules
 	  \end{lstlisting}
       \end{block}
-      \end{column}
- \end{columns}
     \begin{block}{Stdout}
     \centering
-    \includegraphics[scale=0.3]{examples/snakefile1/screen1.png}
+    \includegraphics[scale=0.3]{images/screen1.png}
     \end{block}     
 \end{frame}
 
-\begin{frame}    
-    \centering
-    \includegraphics[height=8cm, width=1.1\textwidth]{examples/data/DOLPHINS_1024.png}
-\end{frame}
 
 
 % -----------------------------------------------------------
                 
 \begin{frame}[fragile]
-\frametitle{Wildcards}
+\frametitle{Wildcards: generalized inputs/outputs}
 \small
 \only<1>{
 \begin{block}{}
@@ -709,16 +701,16 @@ rule spectrogram:
 configfile: "config.yaml"
 
 rule all:
-    input: expand("data/{name}_{ws}.png", 
-                          name=config['samples'], 
-                          ws=config['windows'])
+  input: expand("data/{name}_{ws}.png", 
+                        name=config['samples'], 
+                        ws=config['windows'])
 
 rule spectrogram:
-    input: "data/{dataset}.wav"
-    output: "data/{dataset}_{window}.png"
-    log: "logs/{dataset}_{window}.log"
-    shell: 
-      "python spec.py {input} {wildcards.window} > {log}"
+  input: "data/{dataset}.wav"
+  output: "data/{dataset}_{window}.png"
+  log: "logs/{dataset}_{window}.log"
+  shell: 
+    "python spec.py {input} {wildcards.window} > {log}"  
     \end{lstlisting}
     \end{block} 
 \end{frame}
@@ -788,7 +780,7 @@ snakemake -s spectrogram.rules \
 
 \begin{frame}
 \begin{block}{}
- \includegraphics[scale=0.32]{examples/results.png}
+ \includegraphics[scale=0.32]{images/results.png}
 \end{block}
 \end{frame}
 
@@ -1063,7 +1055,7 @@ rule you:
 \end{lstlisting}
 \end{block}
 
-\includegraphics[scale=0.3]{examples/thanks.png}
+\includegraphics[scale=0.3]{images/thanks.png}
 \end{frame}
 
 % --------------------------------------------------------
