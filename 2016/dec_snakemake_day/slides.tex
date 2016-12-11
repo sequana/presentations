@@ -142,7 +142,7 @@
     \end{textblock*}
 \end{frame}
 
-\begin{frame}[fragile]{Rules specificity: input and output are variable}
+\begin{frame}[fragile]{Rules specificity: input and output are variables}
     \begin{itemize}
         \item Rules are generic and easily reusable
         \begin{block}{mark\_duplicates.rules}
@@ -163,11 +163,11 @@ rule mark_duplicates:
 
 \begin{frame}[fragile]{Dynamics rules}
     \begin{itemize}
-        \item Each rules must be unique in a pipeline
+        \item Each rule must be unique in a pipeline
         \begin{alertblock}{}
-        Some pipeline must use multiple times one rules like fastqc in quality control pipeline
+        Some pipelines must use multiple times one rules like fastqc in quality control pipeline
         \end{alertblock}
-        \item These rules are templatized to become dynamics:
+        \item These rules are templatized to become dynamic:
         \begin{block}{quality\_control.rules}
         \begin{lstlisting}
 exec(open(sequana.modules["fastqc"], "r").read())
@@ -242,8 +242,8 @@ include: fastqc_dynamic(adapter_removal, manager)
             \only<1>{
                 \begin{itemize}
                     \item Interface developed with PyQT5 and python
-                    \item Wrap our snakemake pipeline to ease the usage
-                    \item Usable on our cluster
+                    \item Wrap our snakemake pipelines to ease the usage
+                    \item Usable on our cluster, which allows X11
                 \end{itemize}
             }
             \only<2-6>{
@@ -308,13 +308,14 @@ bioRxiv 092478; doi: http://dx.doi.org/10.1101/092478}
                     \begin{itemize}
                         \item Christiane Bouchier
                     \end{itemize}
-                \item Fruitful discussion:
+                \item Fruitful discussions:
                     \begin{itemize}
                         \item Claudia Chica
                         \item Varun Khanna
                         \item Pierre Lechat
-                        \item Frédérique Lemoine
-                        \item Hervé Menager
+                        \item Frédéric Lemoine
+                        \item Hervé Ménager
+                        \item Bioinformatics and Biostatistics HUB 
                     \end{itemize}
             \end{itemize}
         \end{column}
@@ -326,9 +327,9 @@ bioRxiv 092478; doi: http://dx.doi.org/10.1101/092478}
                     \item Amine Ghozlane
                     \item Sean Kennedy
                     \item Béatrice Regnault
-                    \item Hugo Varret
+                    \item Hugo Varet
                 \end{itemize}
-                \item Organization:
+                \item Organizations:
 
                     \includegraphics[scale=0.07]{images/citech}
 
