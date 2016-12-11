@@ -1,0 +1,16 @@
+digraph snakemake_dag {
+    graph[bgcolor=white, margin=0];
+    node[shape=box, style=rounded, fontname=sans,                 fontsize=10, penwidth=2];
+    edge[penwidth=2, color=grey];
+
+	4[label = "make directory", color = "0.00 0.6 0.85", style="rounded"];
+	0[label = "report", color = "0.00 0.6 0.85", style="rounded"];
+	1[label = "bwa_mapping\nsample: sample_B", color = "0.50 0.6 0.85", style="rounded"];
+	2[label = "bwa_index", color = "0.17 0.6 0.85", style="rounded"];
+	3[label = "bwa_mapping\nsample: sample_A", color = "0.50 0.6 0.85", style="rounded"];
+	1 -> 0
+	3 -> 0
+	2 -> 1
+	2 -> 3
+    4 -> 2
+}            

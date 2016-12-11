@@ -1,0 +1,22 @@
+
+filenames = ["sample_A", "sample_B"]
+
+rule all:
+    input: expand("mapped_sample/{sample}.bam", sample=filenames)
+
+rule bwa_index:
+    input: "phiX174.fa"
+    output: "phiX174.fa.bwt"
+    shell: "bwa index {input}"
+
+rule bwa_mapping:
+    input:
+        ref = "phiX174.fa",
+        index = "phiX174.fa.bwt",
+        fastq = "{sample}.fastq.gz"
+    output: "mapped_sample/{sample}.bam"
+    shell:
+        "bwa mem {input.ref} {input.fastq} | samtools view -Sb - > {output}"
+
+rule clean:
+    shell: "rm -f phiX*fa.* *.bam"
