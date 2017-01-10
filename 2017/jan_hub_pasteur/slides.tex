@@ -1,0 +1,158 @@
+\documentclass{beamer}
+
+\input{../../slides/packages.tex}
+
+
+\usetheme{Warsaw}
+
+%% Themes
+% Outer themes
+\useoutertheme{shadow}
+% Rounded boxes and shadows
+\useinnertheme[shadow=true]{rounded}
+% Solid \item symbols
+\useinnertheme{circles}
+
+%% Custom colors
+\definecolor{rltgreen}{rgb}{0,0.5,0}
+\definecolor{pasteur}{RGB}{0,90,154}
+\setbeamerfont{block title}{size={}}
+\setbeamercolor{structure}{fg=pasteur}
+\setbeamercolor{item}{fg=pasteur}
+
+%Color of title
+\setbeamertemplate{frametitle}
+{
+    \nointerlineskip
+    \begin{beamercolorbox}[sep=0.3cm,ht=1.8em,wd=\paperwidth]{frametitle}
+        \vbox{}\vskip-2ex%
+        \strut\insertframetitle\strut
+        \vskip-0.8ex%
+    \end{beamercolorbox}
+}
+% Hide navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+%% Title block
+\setbeamercolor*{title}{use=structure,fg=white,bg=pasteur}
+
+\makeatletter
+
+%% Top infolines
+\setbeamertemplate{headline}{%
+\leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex]{palette quaternary}%
+    \insertsectionnavigationhorizontal{\paperwidth}{}{\hskip0pt plus1filll}
+    \end{beamercolorbox}%
+  }
+}
+
+
+\input{../../slides/snakemake_style.tex}
+
+%% Set up title ---------------------------------------------------------------
+
+\title[Sequana]{A very brief history of Sequana}
+\author[T. Cokelaer]{Thomas Cokelaer}
+\institute{Institut Pasteur}
+\date{Jan 17th 2017, Institut Pasteur (HUB talk)}
+
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\begin{document}
+
+%% Title slide ----------------------------------------------------------------
+
+\begin{frame}[plain]
+    \titlepage
+    \begin{textblock*}{5cm}(4.5cm,0.3cm)
+        \includegraphics[scale=0.09]{images/Institut_Pasteur.png}
+    \end{textblock*}
+\end{frame}
+
+%% Slides ---------------------------------------------------------------------
+
+\section{Motivation}
+\input{../../slides/slide_biomics_2017_jan_1}
+\input{../../slides/slide_motivation_needs_2016_march}
+\input{../../slides/slide_sequana_motivation}
+
+
+\section{Snakemake as a workflow manager}
+\input{../../slides/slide_sequana_pipelines_2017_jan}
+\input{../../slides/slide_sequana_gui_example}
+
+
+\section{The Sequana library}
+
+\begin{frame}
+\frametitle{Python behind the scene}
+ \begin{block}{Python as a glue}
+     - Make use of bioconda for requirements and versioning of dependendies. \\
+     - For low-level computations, use existing libraries (e.g., pysam)
+ \end{block}
+ 
+ \begin{block}{Dev of original tools}
+  e.g. coverage or quick taxonomy 
+ \end{block}
+ 
+ \begin{block}{add missing bricks}
+  - kraken2krona
+  - ...
+ \end{block}
+
+ \begin{block}{HTML Reporting}
+  Based on Jinja and Sequana reports.
+ \end{block}
+\end{frame}
+
+ 
+\begin{frame}
+\begin{block}{I want to use it}
+ module use /pasteur/projets/policy01/Matrix/modules\\
+ module load sequana
+\end{block} 
+\end{frame}
+
+
+\section{Continuous Integration}
+\input{../../slides/slide_sequana_ci_2017_jan}
+
+
+\section{Summary and Future Directions}
+
+\begin{frame}
+ \frametitle{Summary}
+Sequana is a versatile tool that provides
+
+\begin{enumerate}
+ \item A Python library dedicated to NGS analysis (e.g., tools to visualise standard NGS formats).
+ \item A set of pipelines dedicated to NGS in the form of Snakefiles (snakemake)
+ \item Original tools to help in the creation of such pipelines including HTML reports.
+ \item Standalone applications:
+ \begin{itemize}
+    \item \textbf{sequana\_coverage} ease the extraction of genomic regions of interest and genome coverage information
+ \end{itemize}
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Sequana history}
+    \includegraphics[scale=0.2]{images/timeline}
+    \footnotetext[1]{\tiny Detection and characterization of low and high genome coverage regions using an efficient running median and a double threshold approach.
+Dimitri Desvillechabrol, Christiane Bouchier, Sean Kennedy, Thomas Cokelaer
+bioRxiv 092478; doi: http://dx.doi.org/10.1101/092478}
+\end{frame}
+
+\end{document}
