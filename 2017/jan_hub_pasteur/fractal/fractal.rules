@@ -1,0 +1,29 @@
+# Generate N similar images with differenc colormap
+from random import random
+configfile: "fractal.yaml"
+config = config['fractal']; N = config['N']
+
+rule all:
+    input: expand("julia_{index}.png", index=range(N)), "index.html"
+
+rule image:
+    output: image="julia_{index}.png"
+    run:
+        x, y = random()*2-1, random()*2-1
+        if y<0: xy = "%.4f %.4f j" % (x,y)
+        else: xy = "%.4f +%.4f j" % (x,y)
+        cmd = "python -m fractal julia %s" % xy
+        cmd += " --size=%(size)s --depth=%(depth)s --zoom=%(zoom)s -m hot "
+        cmd += " -o julia_%s.png" % wildcards.index
+        print(cmd % config)
+        shell(cmd % config)
+
+rule report:
+    input: expand("julia_{index}.png", index=range(N))
+    output: "index.html"
+    run:
+        with open(output[0], "w") as fh:
+            fh.write('<div style="float:left;">')
+            for this in input:
+                fh.write('<img style="border: 2px solid white" src="%s" title="%s">' % (this, this))
+            fh.write("</div>")

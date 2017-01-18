@@ -1,7 +1,7 @@
 \documentclass{beamer}
 
 \input{../../slides/packages.tex}
-
+\usepackage{tikz}
 
 \usetheme{Warsaw}
 
@@ -20,10 +20,10 @@
 \setbeamercolor{structure}{fg=pasteur}
 \setbeamercolor{item}{fg=pasteur}
 
+
 %Color of title
 \setbeamertemplate{frametitle}
-{
-    \nointerlineskip
+{    \nointerlineskip
     \begin{beamercolorbox}[sep=0.3cm,ht=1.8em,wd=\paperwidth]{frametitle}
         \vbox{}\vskip-2ex%
         \strut\insertframetitle\strut
@@ -89,9 +89,6 @@
 \input{../../slides/slide_sequana_motivation}
 
 
-\section{Snakemake as a workflow manager}
-\input{../../slides/slide_sequana_pipelines_2017_jan}
-\input{../../slides/slide_sequana_gui_example}
 
 
 \section{The Sequana library}
@@ -117,18 +114,95 @@
  \end{block}
 \end{frame}
 
- 
+
+
+\section{Snakemake as a workflow manager}
+
+
 \begin{frame}
-\begin{block}{I want to use it}
- module use /pasteur/projets/policy01/Matrix/modules\\
- module load sequana
-\end{block} 
+ \includegraphics[width=1.\textwidth, height=0.8\textheight]{images/julia_nice.png}
 \end{frame}
 
 
+\begin{frame}[fragile]
+\frametitle{Snakemake workflow = Snakefile + config file}
+\begin{block}{pseudo working example of a simple workflow:}
+  \begin{lstlisting}
+configfile: "fractal.yaml"
+config = config['fractal']; N = config['N']
+
+rule all:
+    input:expand("julia_{idx}.png", idx=range(N)), "index.html"
+
+rule image:
+    output: image="julia_{idx}.png"
+    run:
+        xy = "%.3f +%.3f j" % (random(), random())
+        cmd = "python -m fractal julia %s" % xy
+        cmd += " --size=%(size)s --depth=%(depth)s "
+        cmd += " -o julia_%s.png" % wildcards.index        
+        shell(cmd % config)
+
+rule report:
+    input: expand("julia_{idx}.png", index=range(N))
+    output: "index.html"
+    run: touch('index.html')
+\end{lstlisting} 
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{configuration file}
+ \begin{lstlisting}
+##########################################################
+# Input parameters for the fractal analysis
+#
+# :Parameters: 
+#
+# - size: output image size formatted as NxM where N and M 
+#         are integers
+# - depth: a integer (e.g. 200)
+# - zoom: a positive value e.g. 0.5
+# - N: number of random sets
+fractal:
+    size: 200x200
+    depth: 200
+    zoom: 0.7
+    N: 20
+ \end{lstlisting}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+\begin{lstlisting}[basicstyle=\ttfamily\large]
+snakemake -s fractal.rules 
+          --configfile fractal.yaml
+ \end{lstlisting}
+ 
+ 
+ \includegraphics[scale=0.6]{fractal/dag.png}
+%sequanix -w . -s fractal.rules  -c fractal.yaml 
+\end{frame}
+
+
+
+
+\input{../../slides/slide_sequana_pipelines_2017_jan}
+\input{../../slides/slide_sequana_gui_example}
+
+ 
 \section{Continuous Integration}
 \input{../../slides/slide_sequana_ci_2017_jan}
 
+
+\begin{frame}{Sequana history}
+    \includegraphics[scale=0.2]{images/timeline}
+    \footnotetext[1]{\tiny Detection and characterization of low and high genome coverage regions using an efficient running median and a double threshold approach.
+Dimitri Desvillechabrol, Christiane Bouchier, Sean Kennedy, Thomas Cokelaer
+bioRxiv 092478; doi: http://dx.doi.org/10.1101/092478}
+\end{frame}
 
 \section{Summary and Future Directions}
 
@@ -137,8 +211,8 @@
 Sequana is a versatile tool that provides
 
 \begin{enumerate}
- \item A Python library dedicated to NGS analysis (e.g., tools to visualise standard NGS formats).
  \item A set of pipelines dedicated to NGS in the form of Snakefiles (snakemake)
+ \item A Python library dedicated to NGS analysis (e.g., tools to visualise standard NGS formats).
  \item Original tools to help in the creation of such pipelines including HTML reports.
  \item Standalone applications:
  \begin{itemize}
@@ -148,11 +222,5 @@ Sequana is a versatile tool that provides
 \end{frame}
 
 
-\begin{frame}{Sequana history}
-    \includegraphics[scale=0.2]{images/timeline}
-    \footnotetext[1]{\tiny Detection and characterization of low and high genome coverage regions using an efficient running median and a double threshold approach.
-Dimitri Desvillechabrol, Christiane Bouchier, Sean Kennedy, Thomas Cokelaer
-bioRxiv 092478; doi: http://dx.doi.org/10.1101/092478}
-\end{frame}
 
 \end{document}

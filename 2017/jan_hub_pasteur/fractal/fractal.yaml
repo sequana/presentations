@@ -1,0 +1,16 @@
+
+
+
+###########################################################################
+# Input parameters for the fractal analysis
+#
+# :Parameters: 
+#
+# - size: the output image size formatted as NxM where N and M are integers
+# - depth: a integer (e.g. 200)
+# - zoom: a positive value e.g. 0.5
+fractal:
+    size: 200x200
+    depth: 200
+    zoom: 0.7
+    N: 5
