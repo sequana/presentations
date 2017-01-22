@@ -56,7 +56,7 @@
 \title[Sequana]{A very brief history of Sequana}
 \author[T. Cokelaer]{Thomas Cokelaer}
 \institute{Institut Pasteur}
-\date{Jan 17th 2017, Institut Pasteur (HUB talk)}
+\date{Jan 24th 2017, Institut Pasteur (HUB talk)}
 
 
 \AtBeginSection[]{
@@ -83,25 +83,25 @@
 
 %% Slides ---------------------------------------------------------------------
 
-\section{Motivation}
+
 \input{../../slides/slide_biomics_2017_jan_1}
-\input{../../slides/slide_motivation_needs_2016_march}
-\input{../../slides/slide_sequana_motivation}
+%\input{../../slides/slide_motivation_needs_2016_march}
+\input{slide_sequana_motivation}
 
 
 
 
-\section{The Sequana library}
+\section{Sequana: a Python library}
 
 \begin{frame}
 \frametitle{Python behind the scene}
- \begin{block}{Python as a glue}
-     - Make use of bioconda for requirements and versioning of dependendies. \\
+ \begin{block}{Python as a glue language}
+     - Make use of anaconda for installation and various dependendies. \\
      - For low-level computations, use existing libraries (e.g., pysam)
  \end{block}
  
  \begin{block}{Dev of original tools}
-  e.g. coverage or quick taxonomy 
+  e.g. coverage or quick taxonomy (see talk on sequana\_coverage)
  \end{block}
  
  \begin{block}{add missing bricks}
@@ -116,7 +116,7 @@
 
 
 
-\section{Snakemake as a workflow manager}
+\section{Sequana: snakemake as a workflow manager}
 
 
 \begin{frame}
@@ -129,24 +129,20 @@
 \begin{block}{pseudo working example of a simple workflow:}
   \begin{lstlisting}
 configfile: "fractal.yaml"
-config = config['fractal']; N = config['N']
+config = config['fractal']
+N = config['N']
 
 rule all:
-    input:expand("julia_{idx}.png", idx=range(N)), "index.html"
+    input:expand("julia_{index}.png", index=range(N))
 
 rule image:
-    output: image="julia_{idx}.png"
+    output: image="julia_{index}.png"
     run:
         xy = "%.3f +%.3f j" % (random(), random())
         cmd = "python -m fractal julia %s" % xy
         cmd += " --size=%(size)s --depth=%(depth)s "
         cmd += " -o julia_%s.png" % wildcards.index        
         shell(cmd % config)
-
-rule report:
-    input: expand("julia_{idx}.png", index=range(N))
-    output: "index.html"
-    run: touch('index.html')
 \end{lstlisting} 
 \end{block}
 \end{frame}
@@ -165,10 +161,10 @@ rule report:
 # - zoom: a positive value e.g. 0.5
 # - N: number of random sets
 fractal:
-    size: 200x200
-    depth: 200
-    zoom: 0.7
-    N: 20
+    - size: 200x200
+    - depth: 200
+    - zoom: 0.7
+    - N: 20
  \end{lstlisting}
 \end{block}
 \end{frame}
@@ -181,44 +177,46 @@ snakemake -s fractal.rules
           --configfile fractal.yaml
  \end{lstlisting}
  
- 
- \includegraphics[scale=0.6]{fractal/dag.png}
+\pause 
+ \includegraphics[scale=0.25]{./images/julia_set.png}
 %sequanix -w . -s fractal.rules  -c fractal.yaml 
 \end{frame}
 
-
-
-
 \input{../../slides/slide_sequana_pipelines_2017_jan}
-\input{../../slides/slide_sequana_gui_example}
 
+
+\section{Sequana: for end users with Sequanix}
+\input{../../slides/slide_sequana_gui_example}
  
-\section{Continuous Integration}
+
+\section{Sequana: Continuous integration}
 \input{../../slides/slide_sequana_ci_2017_jan}
 
-
-\begin{frame}{Sequana history}
-    \includegraphics[scale=0.2]{images/timeline}
-    \footnotetext[1]{\tiny Detection and characterization of low and high genome coverage regions using an efficient running median and a double threshold approach.
-Dimitri Desvillechabrol, Christiane Bouchier, Sean Kennedy, Thomas Cokelaer
-bioRxiv 092478; doi: http://dx.doi.org/10.1101/092478}
-\end{frame}
-
-\section{Summary and Future Directions}
+\section{Summary}
 
 \begin{frame}
  \frametitle{Summary}
 Sequana is a versatile tool that provides
 
 \begin{enumerate}
- \item A set of pipelines dedicated to NGS in the form of Snakefiles (snakemake)
+ \item A set of snakemake workflows dedicated to NGS 
+ \item A GUI to execute them easily with Sequanix
  \item A Python library dedicated to NGS analysis (e.g., tools to visualise standard NGS formats).
- \item Original tools to help in the creation of such pipelines including HTML reports.
+ \item HTML reports
  \item Standalone applications:
  \begin{itemize}
     \item \textbf{sequana\_coverage} ease the extraction of genomic regions of interest and genome coverage information
+    \item \textbf{sequana\_taxonomy} get a quick overview of read contents
+    \item \dots
  \end{itemize}
 \end{enumerate}
+\end{frame}
+
+\begin{frame}{Sequana history}
+    \includegraphics[scale=0.2]{images/timeline}
+    \footnotetext[1]{\tiny Detection and characterization of low and high genome coverage regions using an efficient running median and a double threshold approach.
+Dimitri Desvillechabrol, Christiane Bouchier, Sean Kennedy, Thomas Cokelaer
+bioRxiv 092478; doi: http://dx.doi.org/10.1101/092478}
 \end{frame}
 
 
