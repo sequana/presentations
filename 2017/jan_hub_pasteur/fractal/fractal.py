@@ -5,6 +5,8 @@
 # @author: Danilo de Jesus da Silva Bellini
 """
 Julia and Mandelbrot fractals image creation
+
+TC: found on https://github.com/danilobellini/fractal
 """
 
 from __future__ import division, print_function
