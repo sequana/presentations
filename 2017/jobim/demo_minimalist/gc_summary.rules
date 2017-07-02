@@ -1,0 +1,23 @@
+import glob
+
+filenames = [this.split(".")[0] for this in glob.glob("*fastq.gz")]
+
+rule all:
+    input: expand("{dataset}.png", dataset=filenames), "index.html"
+
+rule create_GC_images:
+    input: "{dataset}.fastq.gz"
+    output: "{dataset}.png"
+    run:
+        from sequana import FastQC
+        ff = FastQC(input[0]); ff.histogram_gc_content()
+        from pylab import savefig
+        savefig(output[0])
+
+rule html_report:
+    input: expand("{dataset}.png", dataset=filenames)
+    output: "index.html"
+    run:
+        with open("index.html", "w") as fh:
+            for this in input:
+                fh.write('<img src="%s">\n' % this)
