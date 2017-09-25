@@ -8,7 +8,6 @@
 \usepackage[absolute,overlay]{textpos}
 \usepackage{multicol}
 \usepackage{listings}
-\usepackage{svg}
 
 %% Beamer customization--------------------------------------------------------
 
@@ -453,6 +452,25 @@ code and provides user guide.\\
 Updated after each commits on sequana.readthedocs.io
 \end{tabular}
 
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}{Summary}
+    \begin{itemize}
+        \item Sequana is a useful framework built on:
+            \begin{itemize}
+                \item Snakemake provides a very convenient framework to build pipelines.
+                \item Python language provide an API to ease the pipeline design.
+                \item Continous integration able to create high quality tool.
+                \item Sequanix provides a GUI to run Snakemake pipelines for all type of users.
+            \end{itemize}
+        \item If you want to test it:
+            \begin{itemize}
+                \item Documentation: http://sequana.readthedocs.io/
+                \item Singularity: shub://sequana/sequana:master
+            \end{itemize}
+    \end{itemize}
 \end{frame}
 
 \end{document}
