@@ -163,6 +163,25 @@ user interface for Snakemake pipelines (Sequanix).
 \section{Snakemake as a workflow manager}
 
 
+\begin{frame}
+\centering
+
+$\begin{array}{l}
+\includegraphics[height=0.18\textheight]{images/logo_snakemake.png}
+\end{array}$
+{\Huge =}
+Makefile 
+{\LARGE + }
+$\begin{array}{l}
+\includegraphics[height=0.18\textheight]{images/logo_python.png}
+\end{array}$
+
+
+ 
+\end{frame}
+
+
+
 \begin{frame}[fragile]
 \frametitle{A minimalist snakemake workflow example (GC content)}
 \centering
@@ -295,6 +314,14 @@ width=\textwidth]{./images/variant_calling_dag.png}
 \end{frame}
 
 
+
+\begin{frame}{Pipeline complexity}
+
+    \includegraphics[width=11cm, height=7cm]{images/number_of_rules.png}
+
+\end{frame}
+
+
 \begin{frame}[fragile]
  \frametitle{Modularization: Factorise and reuse rules}
 
@@ -325,10 +352,32 @@ Dynamic rules:
 \end{frame}
 
 
-\begin{frame}{Modularization}
-\hspace{-1.8cm}
-    \includegraphics[width=6cm, height=7cm]{images/number_of_rules.png}
-    \includegraphics[scale=0.4]{images/rules_reusing.png}
+\begin{frame}{Factorization}
+\centering
+    \includegraphics[width=8cm]{images/rules_reusing.png}
+\end{frame}
+
+
+\begin{frame}
+ 
+Once upon time there was a pipeline ... 
+
+\vspace{1cm}
+\pause
+
+The Snakemake file assembles the rules together but all parameters can be 
+externalised in a configuration file. 
+
+ \vspace{1cm}
+\pause
+
+One need to edit the configuration file ... without typos 
+ 
+ \vspace{1cm}
+\pause
+
+One need to launch the Snakemake command ... without typos
+ 
 \end{frame}
 
 
@@ -336,10 +385,18 @@ Dynamic rules:
 \input{../../slides/slide_sequana_gui_example}
 
 \begin{frame}
+\frametitle{Reference} 
  
- Reference: submitted to bioinformatics app note (in revision)\\
+\textbf{Sequanix: A Dynamic Graphical Interface for Snakemake Workflows} 
+
+\vspace{.5cm}
+
+\textit{Dimitri Desvillechabrol, Rachel Legendre, Claire Rioualen, Christiane 
+Bouchier, Jacques van Helden, Sean Kennedy, Thomas Cokelaer}
+
+\vspace{.5cm}
  
- Singularity for Linux users with X11 
+https://www.biorxiv.org/content/early/2017/07/12/162701
  
 \end{frame}
 
@@ -405,10 +462,7 @@ over covered genomic regions}
    2. Mixture model estimation (Gaussian approximation)
    3. Set a statistics (z-score)
    4. Clustering (double threshold)
-   
-2. Demo
 
-3. Applications
 \end{verbatim}
 \end{frame}
 
@@ -611,7 +665,6 @@ approach.
     width=1\textwidth]{images/double_threshold.png}
 \end{frame}
 
-\section{DEMO}
 
 
 \begin{frame}[fragile]
@@ -664,31 +717,6 @@ bioRxiv 092478; doi: http://dx.doi.org/10.1101/092478
 
 \section{Summary}
 
-\begin{frame}
- \frametitle{Summary}
-Sequana is a versatile tool that provides
-
-\begin{enumerate}
- \item A set of snakemake workflows dedicated to NGS 
- \item A GUI to execute them easily with Sequanix
- \item A Python library dedicated to NGS analysis (e.g., tools to visualise standard NGS formats).
- \item HTML reports
- \item Standalone applications:
- \begin{itemize}
-    \item \textbf{sequana\_coverage} ease the extraction of genomic regions of interest and genome coverage information
-    \item \textbf{sequana\_taxonomy} get a quick overview of read contents
-    \item \dots
- \end{itemize}
-\end{enumerate}
-\end{frame}
-
-\begin{frame}{Sequana history}
-    \includegraphics[scale=0.2]{images/timeline}
-    \footnotetext[1]{\tiny Detection and characterization of low and high genome coverage regions using an efficient running median and a double threshold approach.
-Dimitri Desvillechabrol, Christiane Bouchier, Sean Kennedy, Thomas Cokelaer
-bioRxiv 092478; doi: http://dx.doi.org/10.1101/092478}
-\end{frame}
-
 
 
 \begin{frame}
@@ -716,20 +744,56 @@ http://sequana.readthedocs.io
 \end{frame}
 
 
+
+\begin{frame}
+ \frametitle{Summary}
+Sequana is a versatile tool that provides
+
+\begin{enumerate}
+ \item A Python library dedicated to NGS analysis (e.g., tools to visualise 
+standard NGS formats).
+\item A set of snakemake workflows and rules dedicated to NGS 
+ \item A GUI to execute them easily with Sequanix
+ \item HTML reports
+ \item Standalone applications:
+ \begin{itemize}
+    \item \textbf{sequana\_coverage} ease the extraction of genomic regions of interest and genome coverage information
+    \item \textbf{sequana\_taxonomy} get a quick overview of read contents
+    \item \dots
+ \end{itemize}
+\end{enumerate}
+\end{frame}
+
+
+
 \begin{frame}
 \frametitle{You like it ? Please, add a star on our github}
     https://github.com/sequana/sequana/stargazers
-    \includegraphics[scale=0.3]{images/stargazers.png}\\
+    \centering
+    \includegraphics[scale=0.28]{images/stargazers.png}\\
 \end{frame}
 
 
 \begin{frame}
- \frametitle{Ackowlegements}
+\frametitle{You like it ? }
+\centering
+Join us ! add rules and pipelines !
+\end{frame}
+
+
+
+    
+    
+
+
+
+\begin{frame}
+ \frametitle{Acknowledgements}
 
  \begin{itemize}
-  \item Dimitri (variant calling, denovo, sequana, sequanix)
+  \item Dimitri Desvillechabrol (variant calling, denovo, sequana, sequanix)
   \item Rachel (Transcriptomics)
-  \item Melissa Cardon (pacbio)
+  \item M\'elissa Cardon (pacbio)
   \item Biomics users (Institut Pasteur)
  \end{itemize}
  
@@ -738,8 +802,14 @@ http://sequana.readthedocs.io
 
 \begin{frame}
 \centering
+\vspace{2cm}
 \LARGE
  Thank you 
+ 
+ \vspace{2cm}
+ 
+ \small
+ Slides available on http://github.com/sequana/sequana\_presentations/2017/ENS
 \end{frame}
 
 
