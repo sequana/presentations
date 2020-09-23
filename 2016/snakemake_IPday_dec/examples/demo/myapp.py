@@ -1,7 +1,7 @@
 from spyre import server
 import pandas as pd
 import json
-
+import soundfile
 
 class SpecExample(server.App):
 
@@ -58,6 +58,7 @@ class SpecExample(server.App):
         ws = params['ws']
         from pylab import imread, imshow, figure, xticks, yticks
         fig = figure()
+        print(ticker + "_%s.png" % ws)
         imshow(imread(ticker + "_%s.png" % ws))
         xticks([])
         yticks([])
@@ -68,5 +69,7 @@ class SpecExample(server.App):
 
 if __name__ == "__main__":
     # need to define the input filenames !
-    app = SpecExample()
+    app = SpecExample(['DOLPHINS', 'WHALES'], [512,1024,4096], ".")
+
+
     app.launch(port=9093)
