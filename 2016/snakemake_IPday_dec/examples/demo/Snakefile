@@ -37,4 +37,4 @@ onsuccess:
     if len(glob.glob("*.png")):
         from myapp import SpecExample
         app = SpecExample(samples, window, ".")
-        app.launch(port=config['port'])
+        app.launch(port=int(config['port']))
